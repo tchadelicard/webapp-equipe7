@@ -14,7 +14,7 @@ class Purchase
     private ?Item $item = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $purchaseProof = null;
+    private ?string $proofFilename = null;
 
     #[ORM\Column(length: 255)]
     private ?string $congratulatoryText = null;
@@ -35,14 +35,14 @@ class Purchase
         return $this;
     }
 
-    public function getPurchaseProof(): ?string
+    public function getProofFilename(): ?string
     {
-        return $this->purchaseProof;
+        return $this->proofFilename;
     }
 
-    public function setPurchaseProof(string $purchaseProof): static
+    public function setProofFilename(string $proofFilename): self
     {
-        $this->purchaseProof = $purchaseProof;
+        $this->proofFilename = $proofFilename;
 
         return $this;
     }
@@ -71,3 +71,4 @@ class Purchase
         return $this;
     }
 }
+?>
