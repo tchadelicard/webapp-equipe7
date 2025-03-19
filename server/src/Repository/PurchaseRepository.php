@@ -16,6 +16,19 @@ class PurchaseRepository extends ServiceEntityRepository
         parent::__construct($registry, Purchase::class);
     }
 
+    /**
+     * Get the top 3 most expensive purchases.
+     */
+    public function findTopExpensivePurchases(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->join('p.item', 'i') // Join with the Item table
+            ->orderBy('i.price', 'DESC') // Sort by item price
+            ->setMaxResults(3) // Limit to top 3
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Purchase[] Returns an array of Purchase objects
 //     */
