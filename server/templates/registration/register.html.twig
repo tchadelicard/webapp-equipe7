@@ -9,6 +9,15 @@
                 <div class="card-body">
                     <h2 class="card-title text-center">Create an Account</h2>
 
+                    {# Show success messages if registration was successful #}
+                    {% for message in app.flashes('success') %}
+                        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+
+                    {# Show email verification error messages if any #}
                     {% for flash_error in app.flashes('verify_email_error') %}
                         <div class="alert alert-danger text-center" role="alert">
                             {{ flash_error }}

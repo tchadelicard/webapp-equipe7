@@ -9,9 +9,25 @@
                 <div class="card-body">
                     <h2 class="card-title text-center">Sign In</h2>
 
+                    {# Flash messages for warnings and errors #}
+                    {% for message in app.flashes('warning') %}
+                        <div class="alert alert-warning text-center alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+
+                    {% for flash_error in app.flashes('verify_email_error') %}
+                        <div class="alert alert-danger text-center alert-dismissible fade show" role="alert">
+                            {{ flash_error }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+
                     {% if error %}
-                        <div class="alert alert-danger text-center">
+                        <div class="alert alert-danger text-center alert-dismissible fade show">
                             {{ error.messageKey|trans(error.messageData, 'security') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     {% endif %}
 
