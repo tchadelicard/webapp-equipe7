@@ -3,148 +3,124 @@
 namespace App\Controller;
 
 use App\Entity\Wishlist;
+use App\Form\WishlistType;
+use App\Repository\WishlistRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[Route('/wishlists')]
 class WishlistController extends AbstractController
 {
-   ###  Affiche la liste des wishlists de l'utilisateur.
-    
-    #[Route('/wishlists', name: 'wishlist_list', methods: ['GET'])]
-    public function list(): Response
+    /**
+     * Liste les wishlists de l'utilisateur connecté
+     */
+    #[Route('/', name: 'wishlist_list', methods: ['GET'])]
+    public function list(WishlistRepository $wishlistRepository): Response
     {
-        $wishlists = $this->getDoctrine()
-                          ->getRepository(Wishlist::class)
-                          ->findAll();
+        $user = $this->getUser();
+        $wishlists = $wishlistRepository->findBy(['owner' => $user]);
 
-        return $this->render('wishlist/list.html.twig', [
+        return $this->render('wishlist/index.html.twig', [
             'wishlists' => $wishlists,
         ]);
     }
 
-
-
-
-     ###  Crée une nouvelle wishlist.  
-    
-    #[Route("/wishlist/new", name:"wishlist_new", methods:["GET", "POST"])]
-    public function new(Request $request): Response
+    /**
+     * Créer une nouvelle wishlist
+     */
+    #[Route('/new', name: 'wishlist_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $em): Response
     {
-        // creation de wishlish
-        // créer le formulaire, le gérer et persister l'entité.
-        return $this->render('wishlist/new.html.twig');
+        $wishlist = new Wishlist();
+        $form = $this->createForm(WishlistType::class, $wishlist);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $wishlist->setOwner($this->getUser());
+            $em->persist($wishlist);
+            $em->flush();
+
+            return $this->redirectToRoute('wishlist_list');
+        }
+
+        return $this->render('wishlist/new.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
-
-
-
-
-     ### Modifie une wishlist existante.
-    #[Route("/wishlist/{id}/edit", name:"wishlist_edit", methods:["GET", "POST"])]
-    public function edit(Request $request, Wishlist $wishlist): Response
+    /**
+     * Modifier une wishlist existante
+     */
+    #[Route('/{id}/edit', name: 'wishlist_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Wishlist $wishlist, EntityManagerInterface $em): Response
     {
-        // modifier la wishlist existante
-        //  création d'un formulaire pré-rempli avec les données de $wishlist
+        if ($wishlist->getOwner() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $form = $this->createForm(WishlistType::class, $wishlist);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+
+            return $this->redirectToRoute('wishlist_list');
+        }
 
         return $this->render('wishlist/edit.html.twig', [
+            'form' => $form->createView(),
             'wishlist' => $wishlist,
         ]);
     }
 
-
-
-
-
-     ### Supprime une wishlist.
-     
-    #[Route("/wishlist/{id}/delete", name:"wishlist_delete", methods:["POST"])]
-    public function delete(Request $request, Wishlist $wishlist): Response
+    /**
+     * Supprimer une wishlist
+     */
+    #[Route('/{id}/delete', name: 'wishlist_delete', methods: ['POST'])]
+    public function delete(Request $request, Wishlist $wishlist, EntityManagerInterface $em): Response
     {
-        // Logique pour supprimer la wishlist
-        //++ token CSRF pour la sécurité
+        if ($wishlist->getOwner() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
 
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($wishlist);
-        $entityManager->flush();
+        if ($this->isCsrfTokenValid('delete'.$wishlist->getId(), $request->request->get('_token'))) {
+            $em->remove($wishlist);
+            $em->flush();
+        }
 
         return $this->redirectToRoute('wishlist_list');
     }
 
-    
-
-
-
-
-     ### Génère l'URL pour le partage privé (pour un utilisateur inscrit).    
-    
-    #[Route("/wishlist/{id}/share/private", name:"wishlist_share_private", methods:["GET"])]
-    public function sharePrivate(Wishlist $wishlist): Response
+    /**
+     * Partager une wishlist (générer une URL publique)
+     */
+    #[Route('/{id}/share', name: 'wishlist_share', methods: ['GET'])]
+    public function share(Wishlist $wishlist): Response
     {
-        // Génération de l'URL privée
-        // inclure un token unique pour la sécurité
+        if ($wishlist->getOwner() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
 
-        $url = $this->generateUrl('wishlist_invitation', ['token' => 'votre_token_unique'], true);
+        $publicUrl = $this->generateUrl('wishlist_public_view', ['id' => $wishlist->getId()], 0);
 
         return $this->render('wishlist/share.html.twig', [
-            'url' => $url,
-            'type' => 'Privé'
-        ]);
-    }
-
-
-
-
-
-
-
-    ###  Génère l'URL pour le partage public (pour que n'importe qui puisse voir la wishlist).
-
-    #[Route("/wishlist/{id}/share/public", name:"wishlist_share_public", methods:["GET"])]
-    public function sharePublic(Wishlist $wishlist): Response
-    {
-        // Génération de l'URL publique
-
-        $url = $this->generateUrl('wishlist_public_view', ['id' => $wishlist->getId()], true);
-
-        return $this->render('wishlist/share.html.twig', [
-            'url' => $url,
-            'type' => 'Public'
-        ]);
-    }
-
-
-
-
-    #### Affiche la wishlist via un lien public.
-    
-    #[Route("/wishlist/public/{id}", name:"wishlist_public_view", methods:["GET"])]
-    public function publicView(Wishlist $wishlist): Response
-    {
-        // Afficher la wishlist de manière publique
-
-        return $this->render('wishlist/public_view.html.twig', [
             'wishlist' => $wishlist,
+            'public_url' => $publicUrl,
         ]);
     }
-
-
-
-
-
 
     /**
-     * Gère l'invitation à une wishlist via un lien contenant un token unique.
-     */
-    #[Route("/wishlist/invitation/{token}", name:"wishlist_invitation", methods:["GET"])]
-    public function invitation(string $token): Response
-    {
-        // Logique pour retrouver l'invitation en fonction du token
-        // Permettre à l'utilisateur d'accepter ou de refuser l'invitation
-
-        return $this->render('wishlist/invitation.html.twig', [
-            'token' => $token,
-        ]);
-    }
+     *  JSP TROP ==Afficher une wishlist publique pour que les gens puissent offrir des cadeaux
+     
+    *#[Route('/{id}/public', name: 'wishlist_public_view', methods: ['GET'])]
+    *public function publicView(Wishlist $wishlist): Response
+    *{
+    *    return $this->render('wishlist/public.html.twig', [
+    *        'wishlist' => $wishlist,
+    *    ]);
+    *}
+        */
 }
