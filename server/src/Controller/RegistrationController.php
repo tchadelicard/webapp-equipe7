@@ -25,6 +25,9 @@ class RegistrationController extends AbstractController
     #[Route('/register', name: 'app_register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, Security $security): Response
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_home');
+        }
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
@@ -52,8 +55,6 @@ class RegistrationController extends AbstractController
                     ->subject('Please Confirm your Email')
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
-
-            $this->addFlash('success', 'Registration successful! Please check your email to verify your account.');
 
             return $this->redirectToRoute('app_home');
         }
@@ -84,5 +85,34 @@ class RegistrationController extends AbstractController
         $this->addFlash('success', 'Your email address has been verified.');
 
         return $this->redirectToRoute('app_home'); // Redirect to home after successful verification
+    }
+
+    #[Route('/verify/email/resend', name: 'app_verify_email_resend')]
+    public function resendVerifcationEmail(Request $request): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            $this->addFlash('warning', 'You need to log in to resend the verification email.');
+            return $this->redirectToRoute('app_login');
+        }
+        if ($user->isVerified()) {
+            $this->addFlash('warning', 'Your email is already verified.');
+            return $this->redirectToRoute('app_home');
+        }
+        // Send email verification
+        $this->emailVerifier->sendEmailConfirmation(
+            'app_verify_email',
+            $user,
+            (new TemplatedEmail())
+                ->from(new Address('contact@localhost.local', 'My Wishlist'))
+                ->to((string) $user->getEmail())
+                ->subject('Please Confirm your Email')
+                ->htmlTemplate('registration/confirmation_email.html.twig')
+        );
+
+        // Add a success flash message after sending the email
+        $this->addFlash('success', 'Verification email has been resent. Please check your inbox.');
+
+        return $this->redirectToRoute('app_home');
     }
 }

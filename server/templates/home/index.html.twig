@@ -4,10 +4,18 @@
 
 {% block body %}
     <div class="container mt-5">
-        {# Display verification message if the user needs to verify their email #}
-        {% for flash_error in app.flashes('verify_email_error') %}
-            <div class="alert alert-danger text-center alert-dismissible fade show" role="alert">
-                {{ flash_error }}
+        {# Display success flash messages #}
+        {% for flash_success in app.flashes('success') %}
+            <div class="alert alert-success text-center alert-dismissible fade show" role="alert">
+                {{ flash_success }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+
+        {# Display warning flash messages #}
+        {% for flash_warning in app.flashes('warning') %}
+            <div class="alert alert-warning text-center alert-dismissible fade show" role="alert">
+                {{ flash_warning }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         {% endfor %}
@@ -15,7 +23,7 @@
         {% if app.user and not app.user.isVerified %}
             <div class="alert alert-warning text-center">
                 Your email is not verified! Please check your inbox for a confirmation email.
-                <br><a href="{{ path('app_verify_email') }}" class="btn btn-primary btn-sm mt-2">Resend Verification Email</a>
+                <br><a href="{{ path('app_verify_email_resend') }}" class="btn btn-primary btn-sm mt-2">Resend Verification Email</a>
             </div>
         {% endif %}
 
