@@ -642,6 +642,87 @@ progress {
   margin-left: auto;
 }
 
+.mycontainer {
+  display: flex;
+  height: 100vh; /* occupe toute la hauteur de la fenêtre */
+}
+
+/* Les deux colonnes */
+.left, .right {
+  flex: 1;
+}
+
+/* Partie gauche : l'image prend toute la surface */
+.left {
+  padding: 0; /* Supprimez le padding pour permettre à l'image de prendre toute la place */
+  overflow: hidden;
+}
+
+.left img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Partie droite : contenu centré */
+.right {
+  background-color: #99cc99;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Styles pour les éléments de la partie droite */
+.right hr {
+  width: 100%;
+  margin: 1rem 0;
+  background-color: #808080
+}
+
+.right input[type="text"] {
+  width: 90%;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;     
+  background-color: 	#D3D3D3; 
+  color: #333;
+}
+
+.right label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+
+.right form {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.right select {
+  flex: 1;
+  padding: 0.5rem;
+  background-color: 	#D3D3D3; 
+}
+
+.right button {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 8px;       
+  background-color: 	#14223C; 
+  color: #fff;
+  transition: background-color 0.3s;
+}
+
+
 @media (min-width: 576px) {
   .container-sm, .container {
     max-width: 540px;

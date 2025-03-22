@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Partager la Wishlist{% endblock %}
+{% block stylesheets %}
+  <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+{% endblock %}
+
+
+{% block body %}
+
+   
+    <div class="mycontainer">
+        <!-- Partie gauche : Affichage de l'image -->
+        <div class="left">
+            <img src="{{ asset('images/new_wishlist.jpg') }}" alt="Illustration partage">
+        </div>
+        <!-- Partie droite : Contenu texte et formulaires de partage -->
+        <div class="right" style="background:#00B8DE">
+            <h1>Créer une nouvelle liste de souhaits</h1>
+            <p>Vous pourrez y ajouter tous les produits qui vous font envie..</p>
+            
+            <hr>
+            
+            
+            {{form(form)}}
+
+            
+            
+            
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+     <script src="{{ asset('js/scripts.js') }}"></script>
+     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+{% endblock %}
