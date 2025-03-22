@@ -7,6 +7,11 @@
 
 
 {% block body %}
+
+    {# Bouton retour en haut à droite #}
+    <a href="{{ path('wishlist_list') }}" class="back-button bg-primary" aria-label="Retour vers la liste des wishlists">
+        <i class="fas fa-arrow-left"></i>
+    </a>
 <div class="mycontainer">
   <!-- Partie gauche : Affichage de l'image -->
   <div class="left">
