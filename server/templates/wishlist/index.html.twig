@@ -2,19 +2,135 @@
 
 {% block title %}Hello WishlistController!{% endblock %}
 
-{% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>D:/IMTA/WEBAPP/group7/webapp-equipe7/server/src/Controller/WishlistController.php</code></li>
-        <li>Your template at <code>D:/IMTA/WEBAPP/group7/webapp-equipe7/server/templates/wishlist/index.html.twig</code></li>
-    </ul>
-</div>
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
 {% endblock %}
+
+{% block body %}
+<body id="page-top">
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg text-uppercase fixed-top" id="mainNav" style="background:#14223C">
+      <div class="container d-flex justify-content-between align-items-center">
+        <a class="navbar-brand" href="#page-top">WEBAPP-GROUP7</a>
+        <div class="rounded-pill  text-white px-3 py-1" style="background:#00B8DE">
+          Bienvenue, {{user}}
+        </div>
+      </div>
+    </nav>
+    
+    <!-- Masthead-->
+    <header class="masthead  text-white text-center" style="position: relative; background:#99cc99">
+      <div class="container">
+        <div class="row align-items-center">
+          <!-- Colonne de gauche pour le texte et le divider -->
+          <div class="col-md-5 text-start">
+            <h1 class="masthead-heading mb-0">Partagez vos envies!</h1>
+            <div class="divider-custom divider-light">
+              <div class="divider-custom-line"></div>
+              <div class="divider-custom-icon"><i class="fas fa-gift"></i></div>
+              <div class="divider-custom-line"></div>
+            </div>
+          </div>
+          <!-- Colonne de droite pour l'image -->
+          <div class="col-md-7 text-end">
+            <img class="masthead-avatar" src="{{ asset('images/presentation1.png') }}" alt="..." style="width: 450px; height: auto;" />
+          </div>
+        </div>
+      </div>
+      <!-- Conteneur des boutons chevauchant header et section suivante -->
+      <div class="position-absolute start-50 translate-middle-x" style="bottom: -35px; z-index: 10;">
+        <a href="{{ path('wishlist_new') }}" class="btn btn-secondary btn-lg me-3">
+          <i class="fas fa-plus me-1"></i> Ajouter une nouvelle wishlist
+        </a>
+        <a href="#" class="btn btn-secondary btn-lg">
+          <i class="fas fa-envelope me-1"></i> Invitations
+        </a>
+      </div>
+    </header>
+    
+    <!-- wishlist Section-->
+    <section class="page-section portfolio" id="portfolio">
+      <div class="container">
+        <!-- wishlist Section Heading-->
+        <h2 class="page-section-heading text-center text-secondary mb-0">Mes Wishlists</h2>
+        <!-- wishlist Grid Items-->
+        <div class="row justify-content-center">
+          <!-- wishlist Item 1-->
+          <div class="col-md-6 col-lg-4 mb-5">
+            <div class="portfolio-item mx-auto" data-bs-toggle="modal" data-bs-target="#portfolioModal1">
+              <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100" style="background:#00B8DE">
+                <a href="#"><div class="portfolio-item-caption-content text-center text-white m-2"><i class="fas fa-edit fa-2x"></i></div></a>
+                <a href="#"><div class="portfolio-item-caption-content text-center text-white m-2"><i class="fas fa-share fa-2x"></i></div></a>
+                <a href="#"><div class="portfolio-item-caption-content text-center text-white m-2"><i class="fas fa-trash fa-2x"></i></div></a>
+              </div>
+              <img class="img-fluid" src="{{ asset('images/gift_bg.png') }}" alt="..." />
+            </div>
+          </div>
+          <!-- wishlist Item 2-->
+          <div class="col-md-6 col-lg-4 mb-5">
+            <div class="portfolio-item mx-auto" data-bs-toggle="modal" data-bs-target="#portfolioModal2">
+              <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100" style="background:#00B8DE">
+                <a href="#"><div class="portfolio-item-caption-content text-center text-white m-2"><i class="fas fa-edit fa-2x"></i></div></a>
+                <a href="#"><div class="portfolio-item-caption-content text-center text-white m-2"><i class="fas fa-share fa-2x"></i></div></a>
+                <a href="#"><div class="portfolio-item-caption-content text-center text-white m-2"><i class="fas fa-trash fa-2x"></i></div></a>
+              </div>
+              <img class="img-fluid" src="{{ asset('images/gift_bg.png') }}" alt="..." />
+            </div>
+          </div>
+          <!-- wishlist Item 3-->
+          <div class="col-md-6 col-lg-4 mb-5">
+            <div class="portfolio-item mx-auto" data-bs-toggle="modal" data-bs-target="#portfolioModal3" >
+              <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100" style="background:#00B8DE">
+                <a href="#"><div class="portfolio-item-caption-content text-center text-white m-2"><i class="fas fa-edit fa-2x"></i></div></a>
+                <a href="#"><div class="portfolio-item-caption-content text-center text-white m-2"><i class="fas fa-share fa-2x"></i></div></a>
+                <a href="#"><div class="portfolio-item-caption-content text-center text-white m-2"><i class="fas fa-trash fa-2x"></i></div></a>
+              </div>
+              <img class="img-fluid" src="{{asset('images/gift_bg.png') }}" alt="..." />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <!-- Copyright Section-->
+    <div class="copyright py-4 text-center text-white" style="background:#14223C">
+      <div class="container"><small>Copyright &copy; Webapp 2025</small></div>
+    </div>
+  </body>
+  {% endblock %}
+
+{% block javascripts %}
+     <script src="{{ asset('js/scripts.js') }}"></script>
+     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
