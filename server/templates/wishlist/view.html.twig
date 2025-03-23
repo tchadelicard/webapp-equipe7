@@ -1,36 +1,41 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} Wishlist de Julie {% endblock %}
+{% block title %} {{ Wishlist.name }} {% endblock %}
 
 {% block body %}
-    <h1>Wishlist de Julie</h1>
+    <h1> {{ Wishlist.name }}</h1>
 
-    <button onclick="sortByPrice('asc')">  Trier par prix croissant</button>
+    <button onclick="sortByPrice('asc')"> Trier par prix croissant</button>
     <button onclick="sortByPrice('desc')"> Trier par prix décroissant</button>
 
     <ul id="wishlist">
         {% for item in wishlist.items %}
-            <li class="{% if item.purchasedBy %}grayed-out{% endif %}">
-                <h2>{{ item.name }}</h2>
+            {% set isPurchased = item.purchased is not same as('None') and item.purchased is not empty %}
+            <li class="{% if isPurchased %}grayed-out{% endif %}" 
+                onmouseenter="showDetails(this)" 
+                onmouseleave="hideDetails(this)">
+                
+                <h2>{{ item.title }}</h2>
                 <p>{{ item.description }}</p>
                 <p>Prix: {{ item.price }}€</p>
-                <a href="{{ item.purchaseUrl }}" target="_blank" onclick="openProofUpload(event, '{{ "https://gmail.com" }}')">Acheter</a>
-                <script>
-                function openProofUpload(event, proofUploadUrl) {
-                    event.preventDefault(); // Empêche l'action par défaut du lien
-                    window.open(proofUploadUrl, '_blank'); // Ouvre la page d'upload dans un nouvel onglet
-                }
-                </script>
+                <button onclick="openPurchaseLinks('{{item.url}}', 'wishlist/upload-proof')">Acheter</button>
 
-                {% if item.purchasedBy %}
-                    <p>Acheté par : {{ item.purchasedBy }}</p>
-                    <p>Message : {{ item.congratulatoryMessage }}</p>
+                {% if isPurchased %}
+                    <div class="purchase-details hidden">
+                        <p>Acheté par : {{ item.purchase.buyer }}</p>
+                        <p>Message : {{ item.purchase.congratulatoryText }}</p>
+                    </div>
                 {% endif %}
             </li>
         {% endfor %}
     </ul>
 
     <script>
+        function openPurchaseLinks(purchaseUrl, proofUploadUrl) {
+            window.open(purchaseUrl, '_blank');  // Ouvre la page d'achat
+            window.open(proofUploadUrl, '_blank');  // Ouvre la page d'upload de preuve
+        }
+
         function sortByPrice(order) {
             let list = document.getElementById('wishlist');
             let items = Array.from(list.children);
@@ -44,11 +49,34 @@
             list.innerHTML = '';
             items.forEach(item => list.appendChild(item));
         }
+
+        function showDetails(element) {
+            let details = element.querySelector('.purchase-details');
+            if (details) {
+                details.classList.remove('hidden');
+            }
+        }
+
+        function hideDetails(element) {
+            let details = element.querySelector('.purchase-details');
+            if (details) {
+                details.classList.add('hidden');
+            }
+        }
     </script>
 
     <style>
         .grayed-out {
             color: gray;
+        }
+        .purchase-details {
+            background-color: rgba(21, 247, 82, 0.73);
+            padding: 5px;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        .hidden {
+            display: none;
         }
     </style>
 {% endblock %}
