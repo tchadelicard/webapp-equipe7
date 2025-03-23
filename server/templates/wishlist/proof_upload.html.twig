@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Preuve d'achat{% endblock %}
+
+{% block body %}
+    <h2>Preuve d'achat pour {{ item.name }}</h2>
+    
+    {% if purchase and purchase.buyer == user %}
+        <p>Vous avez déjà acheté cet article.</p>
+        <form action="{{ path('purchase_update', {'id': item.id}) }}" method="post" enctype="multipart/form-data">
+            <label for="proof">Modifier la preuve d'achat :</label>
+            <input type="file" id="proof" name="proof" accept="image/*,application/pdf" required>
+
+            <label for="message">Modifier le message de félicitations :</label>
+            <textarea id="message" name="message" required>{{ purchase.message }}</textarea>
+            
+            <button type="submit">Modifier</button>
+        </form>
+    {% elseif purchase %}
+        <p>Ce cadeau a été acheté par {{ purchase.buyer.username }}.</p>
+        <p>Message : {{ purchase.message }}</p>
+    {% else %}
+        <form action="{{ path('purchase_create', {'id': item.id}) }}" method="post" enctype="multipart/form-data">
+            <label for="proof">Téléverser une preuve d'achat :</label>
+            <input type="file" id="proof" name="proof" accept="image/*,application/pdf" required>
+
+            <label for="message">Message de félicitations :</label>
+            <textarea id="message" name="message" required></textarea>
+            
+            <button type="submit">Valider</button>
+        </form>
+    {% endif %}
+{% endblock %}

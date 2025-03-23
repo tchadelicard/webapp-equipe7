@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Wishlist de Julie {% endblock %}
+
+{% block body %}
+    <h1>Wishlist de Julie</h1>
+
+    <button onclick="sortByPrice('asc')">  Trier par prix croissant</button>
+    <button onclick="sortByPrice('desc')"> Trier par prix décroissant</button>
+
+    <ul id="wishlist">
+        {% for item in wishlist.items %}
+            <li class="{% if item.purchasedBy %}grayed-out{% endif %}">
+                <h2>{{ item.name }}</h2>
+                <p>{{ item.description }}</p>
+                <p>Prix: {{ item.price }}€</p>
+                <a href="{{ item.purchaseUrl }}" target="_blank" onclick="openProofUpload(event, '{{ "https://gmail.com" }}')">Acheter</a>
+                <script>
+                function openProofUpload(event, proofUploadUrl) {
+                    event.preventDefault(); // Empêche l'action par défaut du lien
+                    window.open(proofUploadUrl, '_blank'); // Ouvre la page d'upload dans un nouvel onglet
+                }
+                </script>
+
+                {% if item.purchasedBy %}
+                    <p>Acheté par : {{ item.purchasedBy }}</p>
+                    <p>Message : {{ item.congratulatoryMessage }}</p>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        function sortByPrice(order) {
+            let list = document.getElementById('wishlist');
+            let items = Array.from(list.children);
+
+            items.sort((a, b) => {
+                let priceA = parseFloat(a.querySelector('p:nth-of-type(2)').textContent.replace('Prix: ', '').replace('€', ''));
+                let priceB = parseFloat(b.querySelector('p:nth-of-type(2)').textContent.replace('Prix: ', '').replace('€', ''));
+                return order === 'asc' ? priceA - priceB : priceB - priceA;
+            });
+
+            list.innerHTML = '';
+            items.forEach(item => list.appendChild(item));
+        }
+    </script>
+
+    <style>
+        .grayed-out {
+            color: gray;
+        }
+    </style>
+{% endblock %}
