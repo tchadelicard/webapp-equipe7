@@ -26,7 +26,9 @@ class AppFixtures extends Fixture
             $user->setFirstName("First$i");
             $user->setLastName("Last$i");
             $user->setPassword($this->passwordHasher->hashPassword($user, 'password123'));
-            $user->setRoles(['ROLE_USER']);
+            if ($i === 1) {
+                $user->setRoles(['ROLE_ADMIN']);
+            }
             $user->setIsVerified(true); // Mark user as verified
 
             $manager->persist($user);
