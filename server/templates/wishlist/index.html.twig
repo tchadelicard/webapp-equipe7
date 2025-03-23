@@ -1,20 +1,81 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello WishlistController!{% endblock %}
+{% block title %}Mes Wishlists{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! </h1>
+    <!-- Masthead-->
+    <header class="masthead text-white text-center" style="position: relative; background:#99cc99">
+      <div class="container">
+        <div class="row align-items-center">
+          <!-- Colonne de gauche pour le texte et le divider -->
+          <div class="col-md-5 text-start">
+            <h1 class="masthead-heading mb-0">Partagez vos envies!</h1>
+            <div class="divider-custom divider-light">
+              <div class="divider-custom-line"></div>
+              <div class="divider-custom-icon"><i class="fas fa-gift"></i></div>
+              <div class="divider-custom-line"></div>
+            </div>
+          </div>
+          <!-- Colonne de droite pour l'image -->
+          <div class="col-md-7 text-end">
+            <img class="masthead-avatar" src="{{ asset('images/presentation1.png') }}" alt="Illustration" style="width: 450px; height: auto;">
+          </div>
+        </div>
+      </div>
+      <!-- Conteneur des boutons chevauchant header et section suivante -->
+      <div class="position-absolute start-50 translate-middle-x" style="bottom: -35px; z-index: 10;">
+        <a href="{{ path('wishlist_new') }}" class="btn btn-secondary btn-lg me-3">
+          <i class="fas fa-plus me-1"></i> Ajouter une nouvelle wishlist
+        </a>
+        <a href="#" class="btn btn-secondary btn-lg">
+          <i class="fas fa-envelope me-1"></i> Invitations
+        </a>
+      </div>
+    </header>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/Users/Jean-phi/Documents/iaw-symfony-docker/Finalproject/webapp-equipe7/server/src/Controller/WishlistController.php</code></li>
-        <li>Your template at <code>/Users/Jean-phi/Documents/iaw-symfony-docker/Finalproject/webapp-equipe7/server/templates/wishlist/index.html.twig</code></li>
-    </ul>
-</div>
+    <!-- Wishlist Section-->
+    <section class="page-section portfolio" id="portfolio">
+      <div class="container">
+        <h2 class="page-section-heading text-center text-secondary mb-0">Mes Wishlists</h2>
+        {% if wishlists|length == 0 %}
+          <h3 class="text-center" style="font-size: 2.5rem; margin-top: 2rem;">Aucune wishlist en cours</h3>
+        {% else %}
+          <div class="row justify-content-center">
+            {% for wishlist in wishlists %}
+              <div class="col-md-6 col-lg-4 mb-5">
+                <div class="portfolio-item mx-auto" data-bs-toggle="modal" data-bs-target="#portfolioModal{{ loop.index }}">
+                  <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100" style="background:#00B8DE">
+                    <a href="{{ path('app_item_list', {'id': wishlist.id, 'wishlist': wishlist}) }}">
+                      <div class="portfolio-item-caption-content text-center text-white m-2">
+                        <i class="fas fa-list fa-2x"></i>
+                      </div>
+                    </a>
+                    <a href="{{ path('wishlist_edit', {'id': wishlist.id}) }}">
+                      <div class="portfolio-item-caption-content text-center text-white m-2">
+                        <i class="fas fa-edit fa-2x"></i>
+                      </div>
+                    </a>
+                    <a href="{{ path('wishlist_share', {'id': wishlist.id}) }}">
+                      <div class="portfolio-item-caption-content text-center text-white m-2">
+                        <i class="fas fa-share fa-2x"></i>
+                      </div>
+                    </a>
+                    <a href="{{ path('wishlist_delete', {'id': wishlist.id}) }}">
+                      <div class="portfolio-item-caption-content text-center text-white m-2">
+                        <i class="fas fa-trash fa-2x"></i>
+                      </div>
+                    </a>
+                  </div>
+                  <img class="img-fluid" src="{{ asset('images/gift_bg.png') }}" alt="Wishlist item">
+                  <div class="wishlist-name text-center mt-2">
+                    {{ wishlist.name }}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </section>
 {% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Partager la Wishlist{% endblock %}
+
+{% block body %}
+
+       {# Bouton retour en haut à droite #}
+       <a href="{{ path('wishlist_list') }}" class="back-button bg-primary" aria-label="Retour vers la liste des wishlists">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+    <div class="mycontainer">
+        <!-- Partie gauche : Affichage de l'image -->
+        <div class="left">
+            <img src="{{ asset('images/new_wishlist.jpg') }}" alt="Illustration partage">
+        </div>
+        <!-- Partie droite : Contenu texte et formulaires de partage -->
+        <div class="right" style="background:#00B8DE">
+            <h1>Créer une nouvelle liste de souhaits</h1>
+            <p>Vous pourrez y ajouter tous les produits qui vous font envie..</p>
+            
+            <hr>
+
+            {{ form(form) }}
+        </div>
+    </div>
+{% endblock %}

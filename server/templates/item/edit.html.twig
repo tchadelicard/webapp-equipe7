@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Item{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h2 class="mb-4">Edit Item</h2>
+
+        {% if form_errors(form) %}
+            <div class="alert alert-danger">
+                {{ form_errors(form) }}
+            </div>
+        {% endif %}
+
+        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+        <div class="mb-3">
+            {{ form_label(form.title, 'Item Title', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+            {% if form_errors(form.title) %}
+                <div class="invalid-feedback d-block">
+                    {{ form_errors(form.title) }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+            {% if form_errors(form.description) %}
+                <div class="invalid-feedback d-block">
+                    {{ form_errors(form.description) }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.price, 'Price', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.price, {'attr': {'class': 'form-control'}}) }}
+            {% if form_errors(form.price) %}
+                <div class="invalid-feedback d-block">
+                    {{ form_errors(form.price) }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.url, 'Purchase URL', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.url, {'attr': {'class': 'form-control'}}) }}
+            {% if form_errors(form.url) %}
+                <div class="invalid-feedback d-block">
+                    {{ form_errors(form.url) }}
+                </div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Update</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
