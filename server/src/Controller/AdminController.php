@@ -18,11 +18,6 @@ class AdminController extends AbstractController
     #[Route('/dashboard', name: 'dashboard')]
     public function dashboard(WishlistRepository $wishlistRepo, PurchaseRepository $purchaseRepo): Response
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('danger', 'Access Denied.');
-            return $this->redirectToRoute('app_home');
-        }
-
         $topPurchases = $purchaseRepo->findTopExpensivePurchases();
         $topWishlists = $wishlistRepo->findTopWishlistsByValue();
 
@@ -35,11 +30,6 @@ class AdminController extends AbstractController
     #[Route('/users', name: 'users')]
     public function users(UserRepository $userRepo): Response
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('danger', 'Access Denied.');
-            return $this->redirectToRoute('app_home');
-        }
-
         return $this->render('admin/users.html.twig', [
             'users' => $userRepo->findAll(),
         ]);
