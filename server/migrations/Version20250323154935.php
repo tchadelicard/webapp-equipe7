@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250319093439 extends AbstractMigration
+final class Version20250323154935 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -25,9 +25,10 @@ final class Version20250319093439 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_F11D61A2FB8E54CD ON invitation (wishlist_id)');
         $this->addSql('CREATE TABLE item (id SERIAL NOT NULL, wishlist_id INT NOT NULL, title VARCHAR(255) NOT NULL, description VARCHAR(255) NOT NULL, price DOUBLE PRECISION NOT NULL, url VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_1F1B251EFB8E54CD ON item (wishlist_id)');
-        $this->addSql('CREATE TABLE purchase (item_id INT NOT NULL, buyer_id INT NOT NULL, purchase_proof VARCHAR(255) NOT NULL, congratulatory_text VARCHAR(255) NOT NULL, PRIMARY KEY(item_id))');
+        $this->addSql('CREATE TABLE purchase (item_id INT NOT NULL, buyer_id INT NOT NULL, proof_filename VARCHAR(255) NOT NULL, congratulatory_text VARCHAR(255) NOT NULL, PRIMARY KEY(item_id))');
         $this->addSql('CREATE INDEX IDX_6117D13B6C755722 ON purchase (buyer_id)');
-        $this->addSql('CREATE TABLE "user" (id SERIAL NOT NULL, first_name VARCHAR(255) NOT NULL, last_name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, is_locked BOOLEAN NOT NULL, is_admin BOOLEAN NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE "user" (id SERIAL NOT NULL, first_name VARCHAR(255) NOT NULL, last_name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, is_locked BOOLEAN NOT NULL, roles JSON NOT NULL, is_verified BOOLEAN NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_8D93D649E7927C74 ON "user" (email)');
         $this->addSql('CREATE TABLE wishlist (id SERIAL NOT NULL, owner_id INT NOT NULL, name VARCHAR(255) NOT NULL, deadline DATE NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_9CE12A317E3C61F9 ON wishlist (owner_id)');
         $this->addSql('CREATE TABLE messenger_messages (id BIGSERIAL NOT NULL, body TEXT NOT NULL, headers TEXT NOT NULL, queue_name VARCHAR(190) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, available_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, delivered_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
