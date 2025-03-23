@@ -16,6 +16,21 @@ class WishlistRepository extends ServiceEntityRepository
         parent::__construct($registry, Wishlist::class);
     }
 
+    /**
+     * Get the top 3 wishlists by total value of items.
+     */
+    public function findTopWishlistsByValue(): array
+    {
+        return $this->createQueryBuilder('w')
+            ->select('w, SUM(i.price) AS totalValue')
+            ->leftJoin('w.items', 'i') // Corrected Join (No "Join::WITH" needed)
+            ->groupBy('w.id') // Group by wishlist
+            ->orderBy('totalValue', 'DESC') // Sort by highest total value
+            ->setMaxResults(3) // Limit to top 3
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Wishlist[] Returns an array of Wishlist objects
     //     */

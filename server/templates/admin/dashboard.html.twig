@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2 class="text-center">Admin Dashboard</h2>
+
+    {# Top 3 Expensive Purchases #}
+    <h3 class="mt-4">Top 3 Most Expensive Items Bought</h3>
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Item</th>
+                <th>Price</th>
+                <th>Buyer</th>
+                <th>Receiver</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for purchase in topPurchases %}
+                <tr>
+                    <td>{{ purchase.item.title }}</td>
+                    <td>{{ purchase.item.price }}€</td>
+                    <td>{{ purchase.buyer.firstName }} {{ purchase.buyer.lastName }}</td>
+                    <td>{{ purchase.item.wishlist.owner.firstName }} {{ purchase.item.wishlist.owner.lastName }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {# Top 3 Wishlists by Total Value #}
+    <h3 class="mt-4">Top 3 Wishlists by Total Value</h3>
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Wishlist</th>
+                <th>Owner</th>
+                <th>Total Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for wishlist in topWishlists %}
+                <tr>
+                    <td>{{ wishlist.0.name }}</td>
+                    <td>{{ wishlist.0.owner.firstName }} {{ wishlist.0.owner.lastName }}</td>
+                    <td>{{ wishlist.totalValue }}€</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
