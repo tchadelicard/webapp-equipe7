@@ -13,10 +13,6 @@
         {% endif %}
 
         {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
-
-        {# Explicitly include the CSRF token field #}
-        {{ form_row(form._token) }}
-
         <div class="mb-3">
             {{ form_label(form.title, 'Item Title', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}

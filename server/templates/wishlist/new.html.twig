@@ -20,24 +20,7 @@
             
             <hr>
 
-            {{ form_start(form) }}
-            {{ form_row(form._token) }} {# Explicitly render the CSRF token #}
-
-            <div class="mb-3">
-                {{ form_label(form.name, 'Nom de la wishlist', {'label_attr': {'class': 'form-label text-white'}}) }}
-                {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
-            </div>
-
-            <div class="mb-3">
-                {{ form_label(form.deadline, 'Date limite', {'label_attr': {'class': 'form-label text-white'}}) }}
-                {{ form_widget(form.deadline, {'attr': {'class': 'form-control', 'type': 'date'}}) }}
-            </div>
-
-            <div class="d-grid gap-2">
-                {{ form_widget(form.save, {'attr': {'class': 'btn btn-light btn-lg'}}) }}
-            </div>
-            {{ form_end(form) }}
-
+            {{ form(form) }}
         </div>
     </div>
 {% endblock %}
