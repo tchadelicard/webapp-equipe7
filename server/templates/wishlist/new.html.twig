@@ -1,10 +1,6 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Partager la Wishlist{% endblock %}
-{% block stylesheets %}
-  <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-{% endblock %}
-
 
 {% block body %}
 
@@ -23,19 +19,25 @@
             <p>Vous pourrez y ajouter tous les produits qui vous font envie..</p>
             
             <hr>
-            
-            
-            {{form(form)}}
 
-            
-            
-            
+            {{ form_start(form) }}
+            {{ form_row(form._token) }} {# Explicitly render the CSRF token #}
+
+            <div class="mb-3">
+                {{ form_label(form.name, 'Nom de la wishlist', {'label_attr': {'class': 'form-label text-white'}}) }}
+                {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.deadline, 'Date limite', {'label_attr': {'class': 'form-label text-white'}}) }}
+                {{ form_widget(form.deadline, {'attr': {'class': 'form-control', 'type': 'date'}}) }}
+            </div>
+
+            <div class="d-grid gap-2">
+                {{ form_widget(form.save, {'attr': {'class': 'btn btn-light btn-lg'}}) }}
+            </div>
+            {{ form_end(form) }}
+
         </div>
     </div>
-
-{% endblock %}
-
-{% block javascripts %}
-     <script src="{{ asset('js/scripts.js') }}"></script>
-     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 {% endblock %}

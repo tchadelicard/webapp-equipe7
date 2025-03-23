@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Wishlist;
 use App\Entity\Invitation;
 use App\Form\WishlistType;
+use App\Repository\UserRepository;
 use App\Repository\WishlistRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -49,7 +50,7 @@ class WishlistController extends AbstractController
         }
 
         return $this->render('wishlist/new.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
@@ -119,87 +120,83 @@ class WishlistController extends AbstractController
     }
 
     #[Route('/{id}/share/users', name: 'wishlist_share_to_users', methods: ['POST'])]
-public function shareToUsers(
-    Request $request,
-    Wishlist $wishlist,
-    UserRepository $userRepository,
-    EntityManagerInterface $em
-): Response {
-    if ($wishlist->getOwner() !== $this->getUser()) {
-        throw $this->createAccessDeniedException();
-    }
-
-    // Récupère la liste des IDs utilisateurs depuis le formulaire
-    $userIds = $request->request->get('users', []);
-
-    // Trouve les utilisateurs correspondants
-    $selectedUsers = $userRepository->findBy(['id' => $userIds]);
-
-    foreach ($selectedUsers as $user) {
-        // Vérifie si une invitation n'existe pas déjà pour (user, wishlist)
-        $existingInvitation = $em->getRepository(Invitation::class)->findOneBy([
-            'invitedUser' => $user,
-            'wishlist' => $wishlist,
-        ]);
-
-        // Si pas d'invitation existante, on la crée
-        if (!$existingInvitation) {
-            $invitation = new Invitation();
-            $invitation->setInvitedUser($user);
-            $invitation->setWishlist($wishlist);
-            $invitation->setStatus(false); // Par exemple, false = en attente
-
-            $em->persist($invitation);
+    public function shareToUsers(
+        Request $request,
+        Wishlist $wishlist,
+        UserRepository $userRepository,
+        EntityManagerInterface $em
+    ): Response {
+        if ($wishlist->getOwner() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
         }
-    }
 
-    $em->flush();
+        // Récupère la liste des IDs utilisateurs depuis le formulaire
+        $userIds = $request->request->get('users', []);
 
-    $this->addFlash('success', 'La wishlist a été partagée avec les utilisateurs sélectionnés.');
+        // Trouve les utilisateurs correspondants
+        $selectedUsers = $userRepository->findBy(['id' => $userIds]);
 
-    return $this->redirectToRoute('wishlist_list');
-}
-
-
-
-
-#[Route('/{id}/share/all', name: 'wishlist_share_to_all', methods: ['POST'])]
-public function shareToAll(
-    Wishlist $wishlist,
-    UserRepository $userRepository,
-    EntityManagerInterface $em
-): Response {
-    if ($wishlist->getOwner() !== $this->getUser()) {
-        throw $this->createAccessDeniedException();
-    }
-
-    // Récupère tous les utilisateurs 
-    $allUsers = $userRepository->findAll();
-
-    foreach ($allUsers as $user) {
-        
-        if ($user !== $this->getUser()) {
+        foreach ($selectedUsers as $user) {
+            // Vérifie si une invitation n'existe pas déjà pour (user, wishlist)
             $existingInvitation = $em->getRepository(Invitation::class)->findOneBy([
                 'invitedUser' => $user,
                 'wishlist' => $wishlist,
             ]);
 
+            // Si pas d'invitation existante, on la crée
             if (!$existingInvitation) {
                 $invitation = new Invitation();
                 $invitation->setInvitedUser($user);
                 $invitation->setWishlist($wishlist);
-                $invitation->setStatus(false);
+                $invitation->setStatus(false); // Par exemple, false = en attente
 
                 $em->persist($invitation);
             }
         }
+
+        $em->flush();
+
+        $this->addFlash('success', 'La wishlist a été partagée avec les utilisateurs sélectionnés.');
+
+        return $this->redirectToRoute('wishlist_list');
     }
 
-    $em->flush();
+    #[Route('/{id}/share/all', name: 'wishlist_share_to_all', methods: ['POST'])]
+    public function shareToAll(
+        Wishlist $wishlist,
+        UserRepository $userRepository,
+        EntityManagerInterface $em
+    ): Response {
+        if ($wishlist->getOwner() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
 
-    $this->addFlash('success', 'La wishlist a été partagée avec tous les utilisateurs.');
+        // Récupère tous les utilisateurs
+        $allUsers = $userRepository->findAll();
 
-    return $this->redirectToRoute('wishlist_list');
-}
+        foreach ($allUsers as $user) {
 
+            if ($user !== $this->getUser()) {
+                $existingInvitation = $em->getRepository(Invitation::class)->findOneBy([
+                    'invitedUser' => $user,
+                    'wishlist' => $wishlist,
+                ]);
+
+                if (!$existingInvitation) {
+                    $invitation = new Invitation();
+                    $invitation->setInvitedUser($user);
+                    $invitation->setWishlist($wishlist);
+                    $invitation->setStatus(false);
+
+                    $em->persist($invitation);
+                }
+            }
+        }
+
+        $em->flush();
+
+        $this->addFlash('success', 'La wishlist a été partagée avec tous les utilisateurs.');
+
+        return $this->redirectToRoute('wishlist_list');
+    }
 }
