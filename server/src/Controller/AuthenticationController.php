@@ -8,32 +8,53 @@ use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
-use Symfony\Bundle\SecurityBundle\Security;
 
-
-class RegistrationController extends AbstractController
+#[Route('/auth')]
+class AuthenticationController extends AbstractController
 {
-    public function __construct(private EmailVerifier $emailVerifier) {}
+    private EmailVerifier $emailVerifier;
+
+    public function __construct(EmailVerifier $emailVerifier) {
+        $this->emailVerifier  = $emailVerifier;
+    }
+
+    #[Route(path: '/login', name: 'app_login')]
+    public function login(AuthenticationUtils $authenticationUtils): Response
+    {
+        $error = $authenticationUtils->getLastAuthenticationError();
+
+        // last username entered by the user
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        return $this->render('authentication/login.html.twig', [
+            'last_username' => $lastUsername,
+            'error' => $error,
+        ]);
+    }
+
+    #[Route(path: '/logout', name: 'app_logout')]
+    public function logout(): void
+    {
+        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
 
     #[Route('/register', name: 'app_register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, Security $security): Response
     {
-        if ($this->getUser()) {
-            return $this->redirectToRoute('app_home');
-        }
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var string $plainPassword */
             $plainPassword = $form->get('plainPassword')->getData();
 
             // Encode the password
@@ -53,13 +74,13 @@ class RegistrationController extends AbstractController
                     ->from(new Address('contact@localhost.local', 'My Wishlist'))
                     ->to((string) $user->getEmail())
                     ->subject('Please Confirm your Email')
-                    ->htmlTemplate('registration/confirmation_email.html.twig')
+                    ->htmlTemplate('authentication/confirmation_email.html.twig')
             );
 
             return $this->redirectToRoute('app_home');
         }
 
-        return $this->render('registration/register.html.twig', [
+        return $this->render('authentication/register.html.twig', [
             'registrationForm' => $form,
         ]);
     }
@@ -67,12 +88,6 @@ class RegistrationController extends AbstractController
     #[Route('/verify/email', name: 'app_verify_email')]
     public function verifyUserEmail(Request $request, TranslatorInterface $translator): Response
     {
-        // If user is not logged in, redirect them to login
-        if (!$this->getUser()) {
-            $this->addFlash('warning', 'You need to log in to verify your email.');
-            return $this->redirectToRoute('app_login');
-        }
-
         try {
             $user = $this->getUser();
             $this->emailVerifier->handleEmailConfirmation($request, $user);
@@ -91,10 +106,6 @@ class RegistrationController extends AbstractController
     public function resendVerifcationEmail(Request $request): Response
     {
         $user = $this->getUser();
-        if (!$user) {
-            $this->addFlash('warning', 'You need to log in to resend the verification email.');
-            return $this->redirectToRoute('app_login');
-        }
         if ($user->isVerified()) {
             $this->addFlash('warning', 'Your email is already verified.');
             return $this->redirectToRoute('app_home');
@@ -107,7 +118,7 @@ class RegistrationController extends AbstractController
                 ->from(new Address('contact@localhost.local', 'My Wishlist'))
                 ->to((string) $user->getEmail())
                 ->subject('Please Confirm your Email')
-                ->htmlTemplate('registration/confirmation_email.html.twig')
+                ->htmlTemplate('authentication/confirmation_email.html.twig')
         );
 
         // Add a success flash message after sending the email
