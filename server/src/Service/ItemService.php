@@ -2,10 +2,11 @@
 
 namespace App\Service;
 
+use App\Entity\Item;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-class WishlistService
+class ItemService
 {
     private Security $security;
 
@@ -14,9 +15,12 @@ class WishlistService
         $this->security = $security;
     }
 
-    public function checkOwnerAndInvitedUsers($wishlist): void
+    public function checkOwnerAndInvitedUsers(Item $item): void
     {
         $user = $this->security->getUser();
+
+        $wishlist = $item->getWishlist();
+
 
         if ($wishlist->getOwner() === $user) {
             return;
