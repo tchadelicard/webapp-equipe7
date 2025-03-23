@@ -33,7 +33,7 @@
         </a>
       </div>
     </header>
-    
+
     <!-- Wishlist Section-->
     <section class="page-section portfolio" id="portfolio">
       <div class="container">
@@ -46,6 +46,11 @@
               <div class="col-md-6 col-lg-4 mb-5">
                 <div class="portfolio-item mx-auto" data-bs-toggle="modal" data-bs-target="#portfolioModal{{ loop.index }}">
                   <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100" style="background:#00B8DE">
+                    <a href="{{ path('app_item_list', {'id': wishlist.id, 'wishlist': wishlist}) }}">
+                      <div class="portfolio-item-caption-content text-center text-white m-2">
+                        <i class="fas fa-list fa-2x"></i>
+                      </div>
+                    </a>
                     <a href="{{ path('wishlist_edit', {'id': wishlist.id}) }}">
                       <div class="portfolio-item-caption-content text-center text-white m-2">
                         <i class="fas fa-edit fa-2x"></i>
