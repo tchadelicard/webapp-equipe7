@@ -202,8 +202,27 @@ class WishlistController extends AbstractController
 
         return $this->redirectToRoute('wishlist_list');
     }
+
+    #[Route('/wishlist/{id}', name: 'view_wishlist')]
+    public function viewWishlist($id, ItemRepository $itemRepository): Response
+    {
+        // Récupération des items de la wishlist depuis la base de données
+        $items = $itemRepository->findBy(['wishlist' => $id]);
+
+        return $this->render('wishlist/view.html.twig', [
+            'wishlist' => [
+                'id' => $id,
+                'title' => 'Wishlist de Rico', 
+                'items' => $items
+            ]
+        ]);
+    }
 }
 ?> 
+
+
+
+
 //     public function viewWishlist() : Response
 //     {
 //        // Simuler des données pour tester
