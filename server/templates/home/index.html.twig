@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Welcome to My App{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        {# Display success flash messages #}
+        {% for flash_success in app.flashes('success') %}
+            <div class="alert alert-success text-center alert-dismissible fade show" role="alert">
+                {{ flash_success }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+
+        {# Display warning flash messages #}
+        {% for flash_warning in app.flashes('warning') %}
+            <div class="alert alert-warning text-center alert-dismissible fade show" role="alert">
+                {{ flash_warning }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+
+        {% if app.user and not app.user.isVerified %}
+            <div class="alert alert-warning text-center">
+                Your email is not verified! Please check your inbox for a confirmation email.
+                <br><a href="{{ path('app_verify_email_resend') }}" class="btn btn-primary btn-sm mt-2">Resend Verification Email</a>
+            </div>
+        {% endif %}
+
+        <div class="text-center">
+            <h1>Welcome, {{ app.user ? app.user.userIdentifier : 'Guest' }}! 👋</h1>
+            <p class="lead">This is your homepage. Explore the app and get started.</p>
+        </div>
+    </div>
+{% endblock %}

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ItemRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ItemRepository::class)]
 class Item
@@ -14,19 +15,46 @@ class Item
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "The title cannot be blank.")]
+    #[Assert\Length(
+        min: 3,
+        max: 255,
+        minMessage: "The title must be at least {{ limit }} characters long.",
+        maxMessage: "The title cannot be longer than {{ limit }} characters."
+    )]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "The description cannot be blank.")]
+    #[Assert\Length(
+        min: 10,
+        max: 255,
+        minMessage: "The description must be at least {{ limit }} characters long.",
+        maxMessage: "The description cannot be longer than {{ limit }} characters."
+    )]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank(message: "The price cannot be blank.")]
+    #[Assert\Positive(message: "The price must be a positive number.")]
+    #[Assert\Type(
+        type: 'float',
+        message: "The price must be a valid decimal number."
+    )]
     private ?float $price = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "The URL cannot be blank.")]
+    #[Assert\Url(message: "The URL is not valid.")]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "The URL cannot be longer than {{ limit }} characters."
+    )]
     private ?string $url = null;
 
     #[ORM\ManyToOne(inversedBy: 'items')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: "The wishlist must not be null.")]
     private ?Wishlist $wishlist = null;
 
     #[ORM\OneToOne(mappedBy: 'item', cascade: ['persist', 'remove'])]
