@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PurchaseController extends AbstractController
 {
-    #[Route('/purchase/{itemId}/create', name: 'purchase_create', methods: ['POST'])]
+    #[Route('/purchase/{itemId}/create', name: 'purchase_create', methods: ['GET', 'POST'])]
     public function create(Request $request, int $itemId, EntityManagerInterface $em): Response
     {
         $item = $em->getRepository(Item::class)->find($itemId);
