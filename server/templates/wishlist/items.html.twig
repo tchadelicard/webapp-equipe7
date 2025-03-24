@@ -10,7 +10,7 @@
         <div class="alert alert-success">{{ message }}</div>
     {% endfor %}
 
-    <a href="{{ path('app_item_new', {wishlistId: wishlist.id}) }}" class="btn btn-primary mb-3">Add New Item</a>
+    <a href="{{ path('app_wishlist_add_item', {id: wishlist.id, wishlist: wishlist}) }}" class="btn btn-primary mb-3">Add New Item</a>
 
     <table class="table table-bordered">
         <thead>
@@ -23,7 +23,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for item in items %}
+            {% for item in wishlist.items %}
                 <tr>
                     <td>{{ item.title }}</td>
                     <td>{{ item.description }}</td>

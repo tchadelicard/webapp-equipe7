@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-#[Route('/admin', name: 'admin_')]
+#[Route('/admin', name: 'app_admin_')]
 class AdminController extends AbstractController
 {
     #[Route('/dashboard', name: 'dashboard')]
@@ -41,14 +41,14 @@ class AdminController extends AbstractController
         $user = $userRepo->find($id);
         if (!$user) {
             $this->addFlash('danger', 'User not found.');
-            return $this->redirectToRoute('admin_users');
+            return $this->redirectToRoute('app_admin_users');
         }
 
         $user->setIsLocked(!$user->isLocked());
         $entityManager->flush();
 
         $this->addFlash('success', 'User status updated.');
-        return $this->redirectToRoute('admin_users');
+        return $this->redirectToRoute('app_admin_users');
     }
 
     #[Route('/user/{id}/delete', name: 'delete_user')]
@@ -57,13 +57,13 @@ class AdminController extends AbstractController
         $user = $userRepo->find($id);
         if (!$user) {
             $this->addFlash('danger', 'User not found.');
-            return $this->redirectToRoute('admin_users');
+            return $this->redirectToRoute('app_admin_users');
         }
 
         $entityManager->remove($user);
         $entityManager->flush();
 
         $this->addFlash('success', 'User deleted successfully.');
-        return $this->redirectToRoute('admin_users');
+        return $this->redirectToRoute('app_admin_users');
     }
 }
