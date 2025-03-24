@@ -40,14 +40,14 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a href="{{ path('admin_toggle_lock', {'id': user.id}) }}" class="btn btn-warning btn-sm">
+                        <a href="{{ path('app_admin_toggle_lock', {'id': user.id}) }}" class="btn btn-warning btn-sm">
                             {% if user.isLocked %}
                                 Unlock 🔓
                             {% else %}
                                 Lock 🔒
                             {% endif %}
                         </a>
-                        <a href="{{ path('admin_delete_user', {'id': user.id}) }}" class="btn btn-danger btn-sm">
+                        <a href="{{ path('app_admin_delete_user', {'id': user.id}) }}" class="btn btn-danger btn-sm">
                             Delete ❌
                         </a>
                     </td>

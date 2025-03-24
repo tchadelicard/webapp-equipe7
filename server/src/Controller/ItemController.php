@@ -14,63 +14,19 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 
-#[Route('/item')]
+#[Route('/items', name: 'app_item_')]
 final class ItemController extends AbstractController
 {
-    private WishlistService $wishlistService;
-
     private ItemService $itemService;
     private EntityManagerInterface $entityManager;
 
-    public function __construct(WishlistService $wishlistService, ItemService $itemService, EntityManagerInterface $entityManager)
+    public function __construct(ItemService $itemService, EntityManagerInterface $entityManager)
     {
-        $this->wishlistService = $wishlistService;
         $this->itemService = $itemService;
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/wishlist/{id}', name: 'app_item_list', methods: ['GET'])]
-    public function itemsInWishlist(Wishlist $wishlist): Response
-    {
-        $this->wishlistService->checkOwnerAndInvitedUsers($wishlist);
-
-        return $this->render('item/index.html.twig', [
-            'wishlist' => $wishlist,
-            'items' => $wishlist->getItems(),
-        ]);
-    }
-
-    #[Route('/new/{wishlistId}', name: 'app_item_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, int $wishlistId): Response
-    {
-        $wishlist = $this->entityManager->getRepository(Wishlist::class)->find($wishlistId);
-
-        if (!$wishlist) {
-            throw $this->createNotFoundException('Wishlist not found');
-        }
-
-        $this->wishlistService->checkOwnerAndInvitedUsers($wishlist);
-
-        $item = new Item();
-        $item->setWishlist($wishlist);
-        $form = $this->createForm(ItemType::class, $item);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->persist($item);
-            $this->entityManager->flush();
-
-            $this->addFlash('success', 'Item added successfully!');
-            return $this->redirectToRoute('app_item_list', ['id' => $wishlist->getId()]);
-        }
-
-        return $this->render('item/new.html.twig', [
-            'form' => $form,
-        ]);
-    }
-
-
-    #[Route('/{id}', name: 'app_item_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show(Item $item): Response
     {
         $this->itemService->checkOwnerAndInvitedUsers($item);
@@ -80,7 +36,7 @@ final class ItemController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_item_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Item $item): Response
     {
         $this->itemService->checkOwnerAndInvitedUsers($item);
@@ -91,7 +47,7 @@ final class ItemController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('app_item_list', ['id' => $item->getWishlist()->getId(), 'wishlist' => $item->getWishlist()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_wishlist_items', ['id' => $item->getWishlist()->getId(), 'wishlist' => $item->getWishlist()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('item/edit.html.twig', [
@@ -100,7 +56,7 @@ final class ItemController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_item_delete', methods: ['POST'])]
+    #[Route('/{id}', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Item $item): Response
     {
         $this->itemService->checkOwnerAndInvitedUsers($item);
@@ -114,6 +70,6 @@ final class ItemController extends AbstractController
 
         $wishlist = $this->entityManager->getRepository(Wishlist::class)->find($wishlistId);
 
-        return $this->redirectToRoute('app_item_list', ['id' => $wishlistId, 'wishlist' => $wishlist], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_wishlist_items', ['id' => $wishlistId, 'wishlist' => $wishlist], Response::HTTP_SEE_OTHER);
     }
 }

@@ -1,16 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} {{ Wishlist.name }} {% endblock %}
+{% block title %} {{ wishlist.name }} {% endblock %}
 
 {% block body %}
-    <h1> {{ Wishlist.name }}</h1>
+    <h1> {{ wishlist.name }}</h1>
 
     <button onclick="sortByPrice('asc')"> Trier par prix croissant</button>
     <button onclick="sortByPrice('desc')"> Trier par prix décroissant</button>
 
     <ul id="wishlist">
         {% for item in wishlist.items %}
-            {% set isPurchased = item.purchased is not same as('None') and item.purchased is not empty %}
+            {% set isPurchased = item.purchase is not same as(null) %}
             <li class="{% if isPurchased %}grayed-out{% endif %}" 
                 onmouseenter="showDetails(this)" 
                 onmouseleave="hideDetails(this)">
@@ -22,7 +22,7 @@
 
                 {% if isPurchased %}
                     <div class="purchase-details hidden">
-                        <p>Acheté par : {{ item.purchase.buyer }}</p>
+                        <p>Acheté par : {{ item.purchase.buyer.firstName }} {{ item.purchase.buyer.lastName }}</p>
                         <p>Message : {{ item.purchase.congratulatoryText }}</p>
                     </div>
                 {% endif %}

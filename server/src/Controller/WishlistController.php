@@ -3,34 +3,40 @@
 
 namespace App\Controller;
 
+use App\Entity\Item;
 use App\Entity\Wishlist;
 use App\Entity\Invitation;
+use App\Form\ItemType;
 use App\Form\WishlistType;
 use App\Repository\UserRepository;
 use App\Repository\WishlistRepository;
 use App\Service\WishlistService;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\ItemRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/wishlists')]
+#[Route('/wishlists', name: 'app_wishlist_')]
 class WishlistController extends AbstractController
 
 {
     private WishlistService $wishlistService;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(WishlistService $wishlistService)
+    public function __construct(
+        WishlistService $wishlistService,
+        EntityManagerInterface $entityManager
+    )
     {
         $this->wishlistService = $wishlistService;
+        $this->entityManager = $entityManager;
     }
 
     /**
      * Liste les wishlists de l'utilisateur connecté
      */
-    #[Route(name: 'wishlist_list', methods: ['GET'])]
+    #[Route(name: 'list', methods: ['GET'])]
     public function list(WishlistRepository $wishlistRepository): Response
     {
         $user = $this->getUser();
@@ -45,7 +51,7 @@ class WishlistController extends AbstractController
     /**
      * Créer une nouvelle wishlist
      */
-    #[Route('/new', name: 'wishlist_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $em): Response
     {
         $wishlist = new Wishlist();
@@ -56,7 +62,7 @@ class WishlistController extends AbstractController
             $wishlist->setOwner($this->getUser());
             $em->persist($wishlist);
             $em->flush();
-            return $this->redirectToRoute('wishlist_list');
+            return $this->redirectToRoute('app_wishlist_list');
         }
 
         return $this->render('wishlist/new.html.twig', [
@@ -67,7 +73,7 @@ class WishlistController extends AbstractController
     /**
      * Modifier une wishlist existante
      */
-    #[Route('/{id}/edit', name: 'wishlist_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Wishlist $wishlist, EntityManagerInterface $em): Response
     {
         $this->wishlistService->checkOwner($wishlist);
@@ -78,7 +84,7 @@ class WishlistController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
 
-            return $this->redirectToRoute('wishlist_list');
+            return $this->redirectToRoute('app_wishlist_list');
         }
 
         return $this->render('wishlist/edit.html.twig', [
@@ -90,7 +96,7 @@ class WishlistController extends AbstractController
     /**
      * Supprimer une wishlist
      */
-    #[Route('/{id}/delete', name: 'wishlist_delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Wishlist $wishlist, EntityManagerInterface $em): Response
     {
         $this->wishlistService->checkOwner($wishlist);
@@ -100,13 +106,13 @@ class WishlistController extends AbstractController
             $em->flush();
         }
 
-        return $this->redirectToRoute('wishlist_list');
+        return $this->redirectToRoute('app_wishlist_list');
     }
 
     /**
      * Partager une wishlist (générer une URL publique)
      */
-    #[Route('/{id}/share', name: 'wishlist_share', methods: ['GET'])]
+    #[Route('/{id}/share', name: 'share', methods: ['GET'])]
     public function share(Wishlist $wishlist, UserRepository $userRepository): Response
     {
         $this->wishlistService->checkOwner($wishlist);
@@ -123,7 +129,7 @@ class WishlistController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/share/users', name: 'wishlist_share_to_users', methods: ['POST'])]
+    #[Route('/{id}/share/users', name: 'share_to_users', methods: ['POST'])]
     public function shareToUsers(
         Request $request,
         Wishlist $wishlist,
@@ -162,10 +168,10 @@ class WishlistController extends AbstractController
 
         $this->addFlash('success', 'La wishlist a été partagée avec les utilisateurs sélectionnés.');
 
-        return $this->redirectToRoute('wishlist_list');
+        return $this->redirectToRoute('app_wishlist_list');
     }
 
-    #[Route('/{id}/share/all', name: 'wishlist_share_to_all', methods: ['POST'])]
+    #[Route('/{id}/share/all', name: 'share_to_all', methods: ['POST'])]
     public function shareToAll(
         Wishlist $wishlist,
         UserRepository $userRepository,
@@ -201,8 +207,41 @@ class WishlistController extends AbstractController
 
         $this->addFlash('success', 'La wishlist a été partagée avec tous les utilisateurs.');
 
-        return $this->redirectToRoute('wishlist_list');
+        return $this->redirectToRoute('app_wishlist_list');
     }
+
+    #[Route('/{id}/items', name: 'items', methods: ['GET'])]
+    public function getWhishlistItems(Wishlist $wishlist): Response {
+        $this->wishlistService->checkOwnerAndInvitedUsers($wishlist);
+
+        return $this->render('wishlist/items.html.twig', [
+            'wishlist' => $wishlist
+        ]);
+    }
+
+    #[Route('/{id}/items/new', name: 'add_item', methods: ['GET', 'POST'])]
+    public function addItemToWishlist(Wishlist $wishlist, Request $request): Response
+    {
+        $this->wishlistService->checkOwnerAndInvitedUsers($wishlist);
+
+        $item = new Item();
+        $item->setWishlist($wishlist);
+        $form = $this->createForm(ItemType::class, $item);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->persist($item);
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'Item added successfully!');
+            return $this->redirectToRoute('app_wishlist_items', ['id' => $wishlist->getId(), 'wishlist' => $wishlist]);
+        }
+
+        return $this->render('wishlist/newItem.html.twig', [
+            'form' => $form,
+        ]);
+    }
+
 
     #[Route('/wishlist/{id}', name: 'view_wishlist')]
     public function viewWishlist(Wishlist $wishlist): Response
