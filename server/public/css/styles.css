@@ -642,109 +642,6 @@ progress {
   margin-left: auto;
 }
 
-.mycontainer {
-  display: flex;
-  height: 100vh; /* occupe toute la hauteur de la fenêtre */
-}
-
-/* Les deux colonnes */
-.left, .right {
-  flex: 1;
-}
-
-/* Partie gauche : l'image prend toute la surface */
-.left {
-  padding: 0; /* Supprimez le padding pour permettre à l'image de prendre toute la place */
-  overflow: hidden;
-}
-
-.left img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-/* Partie droite : contenu centré */
-.right {
-  background-color: #99cc99;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Styles pour les éléments de la partie droite */
-.right hr {
-  width: 100%;
-  margin: 1rem 0;
-  background-color: #808080
-}
-
-.right input[type="text"] {
-  width: 90%;
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;     
-  background-color: 	#D3D3D3; 
-  color: #333;
-}
-
-.right label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  width: 100%;
-}
-
-.right form {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  width: 100%;
-}
-
-.right select {
-  flex: 1;
-  padding: 0.5rem;
-  background-color: 	#D3D3D3; 
-}
-
-.right button {
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  border-radius: 8px;       
-  background-color: 	#14223C; 
-  color: #fff;
-  transition: background-color 0.3s;
-}
-
-
-/* global.css */
-
-/* Bouton de retour */
-.back-button {
-  position: absolute;
-  bottom: 1rem;
-  left: 1rem;
-
-  /* Dimensions et style circulaire */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 40px; 
-  height: 40px;
-  border: 1px solid #ccc;
-  border-radius: 50%;
-  text-decoration: none;
-  color: #333;
-
-  /* Effet au survol (facultatif) */
-  transition: background-color 0.2s;
-}
 
 .back-button:hover {
   background-color: #eee;
@@ -11151,4 +11048,125 @@ html {
 
 .copyright {
   background-color: #1a252f;
+}
+
+.mycontainer {
+  display: flex;
+  height: 100vh; /* Occupe toute la hauteur de la fenêtre */
+}
+
+/* Les deux colonnes */
+.left, .right {
+  flex: 1;
+}
+
+/* Partie gauche : l'image prend toute la surface */
+.left {
+  padding: 0;
+  overflow: hidden;
+}
+
+.left img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Partie droite : contenu centré */
+.right {
+  background-color: #3B82F6;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Styles pour les éléments de la partie droite */
+.right hr {
+  width: 100%;
+  margin: 1rem 0;
+  background-color: #808080;
+}
+
+/* Formulaire avec champs alignés verticalement */
+.right form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  width: 100%; /* Assure la largeur complète */
+}
+
+/* Labels des champs */
+.right label {
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+  width: 100%;
+  text-align: left;
+  color: #ffffff;
+}
+
+/* Champs de saisie (textes et dates) */
+.right input[type="text"],
+.right input[type="date"],
+.right select {
+  width: 100%; /* Prend toute la largeur */
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border: 2px solid #E5E7EB;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  color: #333;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.right input[type="text"]:focus,
+.right input[type="date"]:focus,
+.right select:focus {
+  outline: none;
+  border-color: #2563EB;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Bouton d'envoi */
+.right button {
+  width: 100%; /* Prend toute la largeur */
+  padding: 0.75rem;
+  margin-top: 1rem;
+  cursor: pointer;
+  border-radius: 8px;
+  background-color: #14223C;
+  color: #fff;
+  transition: background-color 0.3s;
+  border: none;
+}
+
+.right button:hover {
+  background-color: #0f1b32;
+}
+
+/* Bouton de retour */
+.back-button {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  text-decoration: none;
+  color: #333;
+  background-color: #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.back-button:hover {
+  background-color: #ddd;
 }

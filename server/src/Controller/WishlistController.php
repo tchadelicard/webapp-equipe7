@@ -8,6 +8,7 @@ use App\Entity\Invitation;
 use App\Form\WishlistType;
 use App\Repository\UserRepository;
 use App\Repository\WishlistRepository;
+use App\Service\WishlistService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ItemRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,10 +20,17 @@ use Symfony\Component\Routing\Annotation\Route;
 class WishlistController extends AbstractController
 
 {
+    private WishlistService $wishlistService;
+
+    public function __construct(WishlistService $wishlistService)
+    {
+        $this->wishlistService = $wishlistService;
+    }
+
     /**
      * Liste les wishlists de l'utilisateur connecté
      */
-    #[Route('/', name: 'wishlist_list', methods: ['GET'])]
+    #[Route(name: 'wishlist_list', methods: ['GET'])]
     public function list(WishlistRepository $wishlistRepository): Response
     {
         $user = $this->getUser();
@@ -77,7 +85,7 @@ class WishlistController extends AbstractController
         }
 
         return $this->render('wishlist/edit.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
             'wishlist' => $wishlist,
         ]);
     }
@@ -204,38 +212,12 @@ class WishlistController extends AbstractController
     }
 
     #[Route('/wishlist/{id}', name: 'view_wishlist')]
-    public function viewWishlist($id, ItemRepository $itemRepository): Response
+    public function viewWishlist(Wishlist $wishlist): Response
     {
-        // Récupération des items de la wishlist depuis la base de données
-        $items = $itemRepository->findBy(['wishlist' => $id]);
+        $this->wishlistService->checkOwnerAndInvitedUsers($wishlist);
 
         return $this->render('wishlist/view.html.twig', [
-            'wishlist' => [
-                'id' => $id,
-                'title' => 'Wishlist de Rico', 
-                'items' => $items
-            ]
+            'wishlist' => $wishlist
         ]);
     }
 }
-?> 
-
-
-
-
-//     public function viewWishlist() : Response
-//     {
-//        // Simuler des données pour tester
-//        $wishlist = [
-//            'id' => 1,
-//            'title' => 'Wishlist de Test',
-//            'items' => [
-//                ['name' => 'Livre Symfony', 'price' => 29.99, 'purchaseUrl' => 'https://exemple.com/livre', 'purchasedBy' => 'Julie', 'description' => 'Ceci un livre enrichissant', 'congratulatoryMessage' => 'Bravo!!'],
-//                ['name' => 'Casque Audio', 'price' => 99.99, 'purchaseUrl' => 'https://exemple.com/casque', 'purchasedBy' => '', 'description' => 'Super casque', 'congratulatoryMessage' => '']
-//            ]
-//        ];
-   
-//        return $this->render('wishlist/view.html.twig', [
-//            'wishlist' => $wishlist
-//        ]);
-//    }
