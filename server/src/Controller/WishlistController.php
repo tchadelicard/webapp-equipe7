@@ -243,7 +243,7 @@ class WishlistController extends AbstractController
     }
 
 
-    #[Route('/wishlist/{id}', name: 'view_wishlist')]
+    #[Route('/wishlists/{id}', name: 'view_wishlist')]
     public function viewWishlist(Wishlist $wishlist): Response
     {
         $this->wishlistService->checkOwnerAndInvitedUsers($wishlist);
