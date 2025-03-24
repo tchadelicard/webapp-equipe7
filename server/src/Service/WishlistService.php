@@ -15,6 +15,16 @@ class WishlistService
         $this->security = $security;
     }
 
+    public function checkOwner(Wishlist $wishlist): void {
+        $user = $this->security->getUser();
+
+        if ($wishlist->getOwner() === $user) {
+            return;
+        }
+
+        throw new AccessDeniedException("Access denied: You do not have permission to access this wishlist");
+    }
+
     public function checkOwnerAndInvitedUsers(Wishlist $wishlist): void
     {
         $user = $this->security->getUser();

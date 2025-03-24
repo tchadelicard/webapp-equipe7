@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: WishlistRepository::class)]
 class Wishlist
@@ -16,9 +17,15 @@ class Wishlist
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotBlank(message: "Name cannot be blank.")]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[Assert\NotNull(message: "The deadline cannot be null.")]
+    #[Assert\GreaterThanOrEqual(
+        value: "today",
+        message: "The deadline must be greater than or equal to today."
+    )]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $deadline = null;
 
