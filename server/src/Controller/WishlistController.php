@@ -56,7 +56,6 @@ class WishlistController extends AbstractController
             $wishlist->setOwner($this->getUser());
             $em->persist($wishlist);
             $em->flush();
-
             return $this->redirectToRoute('wishlist_list');
         }
 
@@ -71,9 +70,7 @@ class WishlistController extends AbstractController
     #[Route('/{id}/edit', name: 'wishlist_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Wishlist $wishlist, EntityManagerInterface $em): Response
     {
-        if ($wishlist->getOwner() !== $this->getUser()) {
-            throw $this->createAccessDeniedException();
-        }
+        $this->wishlistService->checkOwner($wishlist);
 
         $form = $this->createForm(WishlistType::class, $wishlist);
         $form->handleRequest($request);
@@ -96,9 +93,7 @@ class WishlistController extends AbstractController
     #[Route('/{id}/delete', name: 'wishlist_delete', methods: ['POST'])]
     public function delete(Request $request, Wishlist $wishlist, EntityManagerInterface $em): Response
     {
-        if ($wishlist->getOwner() !== $this->getUser()) {
-            throw $this->createAccessDeniedException();
-        }
+        $this->wishlistService->checkOwner($wishlist);
 
         if ($this->isCsrfTokenValid('delete'.$wishlist->getId(), $request->request->get('_token'))) {
             $em->remove($wishlist);
@@ -114,9 +109,7 @@ class WishlistController extends AbstractController
     #[Route('/{id}/share', name: 'wishlist_share', methods: ['GET'])]
     public function share(Wishlist $wishlist, UserRepository $userRepository): Response
     {
-        if ($wishlist->getOwner() !== $this->getUser()) {
-            throw $this->createAccessDeniedException();
-        }
+        $this->wishlistService->checkOwner($wishlist);
 
         $publicUrl = $this->generateUrl('wishlist_public_view', ['id' => $wishlist->getId()], false);
 
