@@ -3,7 +3,7 @@ namespace App\Controller;
 
 use App\Entity\Purchase;
 use App\Entity\Item;
-use App\Form\PurchaseType;
+// use App\Form\PurchaseType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,54 +13,56 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PurchaseController extends AbstractController
 {
-    #[Route('/purchase/{id}/create', name: 'purchase_create', methods: ['POST'])]
-    public function create(Request $request, Item $item, EntityManagerInterface $em): Response
+    #[Route('/purchase/{itemId}/create', name: 'purchase_create', methods: ['POST'])]
+    public function create(Request $request, int $itemId, EntityManagerInterface $em): Response
     {
+        $item = $em->getRepository(Item::class)->find($itemId);
+        if (!$item) {
+            throw $this->createNotFoundException('Item not found');
+        }
+
         $user = $this->getUser();
         if (!$user) {
             return $this->redirectToRoute('app_login');
         }
 
-        $purchase = new Purchase();
-        $purchase->setItem($item);
-        $purchase->setBuyer($user);
-        
-        // Gestion de l'upload
-        $proofFile = $request->files->get('proof');
-        if ($proofFile instanceof UploadedFile) {
-            $filename = uniqid() . '.' . $proofFile->guessExtension();
-            $proofFile->move($this->getParameter('uploads_directory'), $filename);
-            $purchase->setProof($filename);
+        if ($item->getPurchase()) {
+            $buyer = $item->getPurchase()->getBuyer();
+            if ($user != $buyer) {
+                return $this->redirectToRoute('wishlist_view', ['id' => $item->getWishlist()->getId()]);
+            }
+            $purchase = $item->getPurchase();
         }
-        
-        $purchase->setMessage($request->request->get('message'));
-        
-        $em->persist($purchase);
-        $em->flush();
-
-        return $this->redirectToRoute('wishlist_view', ['id' => $item->getWishlist()->getId()]);
-    }
-
-    #[Route('/purchase/{id}/update', name: 'purchase_update', methods: ['POST'])]
-    public function update(Request $request, Purchase $purchase, EntityManagerInterface $em): Response
-    {
-        $user = $this->getUser();
-        if ($user !== $purchase->getBuyer()) {
-            throw $this->createAccessDeniedException("Vous ne pouvez pas modifier cette preuve d'achat.");
+        else{
+            $purchase = new Purchase();
         }
 
-        // Gestion de la mise à jour de la preuve
-        $proofFile = $request->files->get('proof');
-        if ($proofFile instanceof UploadedFile) {
-            $filename = uniqid() . '.' . $proofFile->guessExtension();
-            $proofFile->move($this->getParameter('uploads_directory'), $filename);
-            $purchase->setProof($filename);
+        if ($request->isMethod('POST')) {
+            $proofFile = $request->files->get('proof');
+            if ($proofFile instanceof UploadedFile) {
+                $filename = uniqid() . '.' . $proofFile->guessExtension();
+                $proofFile->move($this->getParameter('proof_directory'), $filename);
+                $purchase->setProofFilename($filename);
+            }
+
+            $message = $request->request->get('message');
+            $purchase->setCongratulatoryText($message);
+
+            $purchase->setItem($item);
+            $purchase->setBuyer($user);
+
+            $em->persist($purchase);
+            $em->flush();
+
+            return $this->redirectToRoute('wishlist_view', ['id' => $item->getWishlist()->getId()]);
         }
-
-        $purchase->setMessage($request->request->get('message'));
-        
-        $em->flush();
-
-        return $this->redirectToRoute('wishlist_view', ['id' => $purchase->getItem()->getWishlist()->getId()]);
+        return $this->render('wishlist/proof_upload.html.twig', [
+            'item' => $item,
+            // 'purchase' => $purchase,
+            // ici est-ce que c'est bien null si l'item a pas encore ete purchased ?
+            'purchase' => $item->getPurchase(),
+            'user' => $user
+        ]);
     }
 }
+?>
