@@ -26,16 +26,6 @@ final class ItemController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/{id}', name: 'show', methods: ['GET'])]
-    public function show(Item $item): Response
-    {
-        $this->itemService->checkOwnerAndInvitedUsers($item);
-
-        return $this->render('item/show.html.twig', [
-            'item' => $item,
-        ]);
-    }
-
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Item $item): Response
     {

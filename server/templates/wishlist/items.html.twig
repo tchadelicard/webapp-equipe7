@@ -1,46 +1,162 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Wishlist Items{% endblock %}
+{% block title %}{{ wishlist.name }}{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <h2 class="mb-4">Items in "{{ wishlist.name }}"</h2>
+    <div class="container mt-7">
+        <h1 class="text-center mb-4">{{ wishlist.name }}</h1>
 
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success">{{ message }}</div>
-    {% endfor %}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
 
-    <a href="{{ path('app_wishlist_add_item', {id: wishlist.id, wishlist: wishlist}) }}" class="btn btn-primary mb-3">Add New Item</a>
+        <div class="d-flex justify-content-start mb-3 gap-2">
+            <a href="{{ path('app_wishlist_add_item', {id: wishlist.id, wishlist: wishlist}) }}" class="btn btn-primary">Ajouter un nouvel article</a>
+            <button class="btn btn-info" onclick="showShareModal()">Partager la liste</button>
+        </div>
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Price</th>
-                <th>URL</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
+        <div class="d-flex justify-content-center mb-4">
+            <div class="btn-group" role="group" aria-label="Options de tri">
+                <button class="btn btn-outline-primary" onclick="sortByPrice('asc')">Trier par prix croissant</button>
+                <button class="btn btn-outline-primary" onclick="sortByPrice('desc')">Trier par prix décroissant</button>
+            </div>
+        </div>
+
+        <div id="wishlist" class="row">
             {% for item in wishlist.items %}
-                <tr>
-                    <td>{{ item.title }}</td>
-                    <td>{{ item.description }}</td>
-                    <td>${{ item.price }}</td>
-                    <td><a href="{{ item.url }}" target="_blank">Buy Here</a></td>
-                    <td>
-                        <a href="{{ path('app_item_edit', {id: item.id}) }}" class="btn btn-warning btn-sm">Edit</a>
-                        <form action="{{ path('app_item_delete', {id: item.id}) }}" method="post" style="display:inline;">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ item.id) }}">
-                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">Delete</button>
-                        </form>
-                    </td>
-                </tr>
+                {% set isPurchased = item.purchase is not same as(null) %}
+                <div class="col-12 mb-3">
+                    <div class="card h-100 {% if isPurchased %}grayed-out{% endif %}" data-price="{{ item.price }}">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div class="flex-grow-1">
+                                <h5 class="card-title">{{ item.title }}</h5>
+                                <p class="card-text">{{ item.description }}</p>
+                                <p class="card-text"><strong>Prix :</strong> <span>{{ item.price }}</span>€</p>
+                            </div>
+                            <div class="btn-group">
+                                {% if isPurchased %}
+                                    <button class="btn btn-info" onclick="showPurchaseDetails('{{ item.purchase.buyer.firstName }}', '{{ item.purchase.buyer.lastName }}', '{{ item.purchase.congratulatoryText }}')">Voir l'achat</button>
+                                {% else %}
+                                    {% set purchaseCreateUrl = url('purchase_create', {'itemId': item.id }) %}
+                                    <button class="btn btn-success" onclick="openPurchaseLinks('{{ item.url }}', '{{ purchaseCreateUrl }}')">Acheter</button>
+                                {% endif %}
+                                <a href="{{ path('app_item_edit', {id: item.id}) }}" class="btn btn-warning">Modifier</a>
+                                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ item.id }}">Supprimer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal de confirmation de suppression -->
+                <div class="modal fade" id="deleteModal{{ item.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ item.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel{{ item.id }}">Confirmer la suppression</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                            </div>
+                            <div class="modal-body">
+                                Êtes-vous sûr de vouloir supprimer l'article "{{ item.title }}" ?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                <form action="{{ path('app_item_delete', {id: item.id}) }}" method="post">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ item.id) }}">
+                                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             {% else %}
-                <tr><td colspan="5" class="text-center">No items yet.</td></tr>
+                <div class="col-12 text-center text-muted">Aucun article pour l'instant.</div>
             {% endfor %}
-        </tbody>
-    </table>
-</div>
+        </div>
+
+        <!-- Modal des détails d'achat -->
+        <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="purchaseModalLabel">Détails de l'achat</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Acheté par :</strong> <span id="purchaseBuyer"></span></p>
+                        <p><strong>Message :</strong> <span id="purchaseMessage"></span></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de partage -->
+        <div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="shareModalLabel">Partager la liste</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                    </div>
+                    <div class="modal-body">
+                        {% set shareLink = url('app_wishlist_public_view', {'uuid': wishlist.uuid }) %}
+                        <label for="shareLink">Lien de partage</label>
+                        <input type="text" id="shareLink" class="form-control" value="{{ shareLink }}" readonly>
+                        <button class="btn btn-secondary mt-3" onclick="copyShareLink()">Copier le lien</button>
+                        <a href="{{ shareLink }}" target="_blank" class="btn btn-primary mt-3">Ouvrir le lien</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openPurchaseLinks(purchaseUrl, proofUploadUrl) {
+            window.open(purchaseUrl, '_blank');
+            window.open(proofUploadUrl, '_blank');
+        }
+
+        function sortByPrice(order) {
+            let list = document.getElementById('wishlist');
+            let items = Array.from(list.querySelectorAll('.col-12'));
+
+            items.sort((a, b) => {
+                let priceA = parseFloat(a.querySelector('.card').getAttribute('data-price'));
+                let priceB = parseFloat(b.querySelector('.card').getAttribute('data-price'));
+                return order === 'asc' ? priceA - priceB : priceB - priceA;
+            });
+
+            items.forEach(item => list.appendChild(item));
+        }
+
+        function showPurchaseDetails(firstName, lastName, message) {
+            document.getElementById('purchaseBuyer').textContent = firstName + ' ' + lastName;
+            document.getElementById('purchaseMessage').textContent = message;
+            var purchaseModal = new bootstrap.Modal(document.getElementById('purchaseModal'));
+            purchaseModal.show();
+        }
+
+        function showShareModal() {
+            var shareModal = new bootstrap.Modal(document.getElementById('shareModal'));
+            shareModal.show();
+        }
+
+        function copyShareLink() {
+            const shareLink = document.getElementById('shareLink');
+            shareLink.select();
+            shareLink.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(shareLink.value);
+            alert("Link copied to clipboard!");
+        }
+    </script>
+
+    <style>
+        .card { transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; border-radius: 12px; will-change: transform; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); }
+        .grayed-out { opacity: 0.7; color: gray; }
+        .btn { margin: 4px; }
+        .btn-group { gap: 5px; }
+    </style>
 {% endblock %}

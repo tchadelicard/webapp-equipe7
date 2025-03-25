@@ -1,23 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Inscription{% endblock %}
 
 {% block body %}
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <div class="col-md-6">
             <div class="card shadow-lg">
                 <div class="card-body">
-                    <h2 class="card-title text-center">Create an Account</h2>
+                    <h2 class="card-title text-center">Créer un compte</h2>
 
-                    {# Show success messages if registration was successful #}
+                    {# Afficher les messages de succès si l'inscription a réussi #}
                     {% for message in app.flashes('success') %}
                         <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
                             {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
                         </div>
                     {% endfor %}
 
-                    {# Show email verification error messages if any #}
+                    {# Afficher les erreurs de vérification d'e-mail si présentes #}
                     {% for flash_error in app.flashes('verify_email_error') %}
                         <div class="alert alert-danger text-center" role="alert">
                             {{ flash_error }}
@@ -27,47 +27,47 @@
                     {{ form_start(registrationForm) }}
 
                     <div class="mb-3">
-                        {{ form_label(registrationForm.firstName, 'First Name', { 'label_attr': {'class': 'form-label'} }) }}
+                        {{ form_label(registrationForm.firstName, 'Prénom', { 'label_attr': {'class': 'form-label'} }) }}
                         {{ form_widget(registrationForm.firstName, { 'attr': {'class': 'form-control'} }) }}
                         {{ form_errors(registrationForm.firstName) }}
                     </div>
 
                     <div class="mb-3">
-                        {{ form_label(registrationForm.lastName, 'Last Name', { 'label_attr': {'class': 'form-label'} }) }}
+                        {{ form_label(registrationForm.lastName, 'Nom', { 'label_attr': {'class': 'form-label'} }) }}
                         {{ form_widget(registrationForm.lastName, { 'attr': {'class': 'form-control'} }) }}
                         {{ form_errors(registrationForm.lastName) }}
                     </div>
 
                     <div class="mb-3">
-                        {{ form_label(registrationForm.email, 'Email Address', { 'label_attr': {'class': 'form-label'} }) }}
+                        {{ form_label(registrationForm.email, 'Adresse e-mail', { 'label_attr': {'class': 'form-label'} }) }}
                         {{ form_widget(registrationForm.email, { 'attr': {'class': 'form-control'} }) }}
                         {{ form_errors(registrationForm.email) }}
                     </div>
 
                     <div class="mb-3">
-                        {{ form_label(registrationForm.plainPassword.first, 'Password', { 'label_attr': {'class': 'form-label'} }) }}
+                        {{ form_label(registrationForm.plainPassword.first, 'Mot de passe', { 'label_attr': {'class': 'form-label'} }) }}
                         {{ form_widget(registrationForm.plainPassword.first, { 'attr': {'class': 'form-control'} }) }}
                         {{ form_errors(registrationForm.plainPassword.first) }}
                     </div>
 
                     <div class="mb-3">
-                        {{ form_label(registrationForm.plainPassword.second, 'Confirm Password', { 'label_attr': {'class': 'form-label'} }) }}
+                        {{ form_label(registrationForm.plainPassword.second, 'Confirmer le mot de passe', { 'label_attr': {'class': 'form-label'} }) }}
                         {{ form_widget(registrationForm.plainPassword.second, { 'attr': {'class': 'form-control'} }) }}
                         {{ form_errors(registrationForm.plainPassword.second) }}
                     </div>
 
                     <div class="form-check mb-3">
                         {{ form_widget(registrationForm.agreeTerms, { 'attr': {'class': 'form-check-input'} }) }}
-                        {{ form_label(registrationForm.agreeTerms, 'I agree to the terms and conditions', { 'label_attr': {'class': 'form-check-label'} }) }}
+                        {{ form_label(registrationForm.agreeTerms, 'J\'accepte les termes et conditions', { 'label_attr': {'class': 'form-check-label'} }) }}
                         {{ form_errors(registrationForm.agreeTerms) }}
                     </div>
 
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-primary btn-lg">Register</button>
+                        <button type="submit" class="btn btn-primary btn-lg">S'inscrire</button>
                     </div>
 
                     <div class="text-center mt-3">
-                        <p>Already have an account? <a href="{{ path('app_login') }}">Login here</a></p>
+                        <p>Vous avez déjà un compte ? <a href="{{ path('app_login') }}">Connectez-vous ici</a></p>
                     </div>
 
                     {{ form_end(registrationForm) }}

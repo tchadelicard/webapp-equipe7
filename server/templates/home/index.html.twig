@@ -1,18 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Welcome to My App{% endblock %}
+{% block title %}Bienvenue sur mes wishlists{% endblock %}
 
 {% block body %}
     <style>
-        /* Adjust the top margin of the hero section to accommodate the fixed navbar */
+        /* Ajustement de la marge supérieure pour la section héros afin de tenir compte de la barre de navigation fixe */
         .hero-section {
             background: url('{{ asset('images/background.png') }}') center center/cover no-repeat;
             color: #fff;
-            /* Adjusted padding to account for navbar */
             padding: 200px 0 120px;
             text-align: center;
             position: relative;
-            width: 100%; /* Full width */
+            width: 100%;
         }
         .hero-section .overlay {
             position: absolute;
@@ -35,7 +34,7 @@
         }
     </style>
 
-    {# Hero Section #}
+    {# Section Héros #}
     <section class="hero-section">
         <div class="overlay"></div>
         <div class="hero-content">
@@ -47,58 +46,58 @@
         </div>
     </section>
 
-    {# Main Container for the rest of the content #}
+    {# Conteneur principal pour le reste du contenu #}
     <div class="container text-center py-5">
-        {# Display success flash messages #}
+        {# Affichage des messages de succès #}
         {% for flash_success in app.flashes('success') %}
             <div class="alert alert-success text-center alert-dismissible fade show" role="alert">
                 {{ flash_success }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
             </div>
         {% endfor %}
 
-        {# Display warning flash messages #}
+        {# Affichage des messages d'avertissement #}
         {% for flash_warning in app.flashes('warning') %}
             <div class="alert alert-warning text-center alert-dismissible fade show" role="alert">
                 {{ flash_warning }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
             </div>
         {% endfor %}
 
         {% if app.user and not app.user.isVerified %}
             <div class="alert alert-warning text-center">
-                Your email is not verified! Please check your inbox for a confirmation email.
-                <br><a href="{{ path('app_verify_email_resend') }}" class="btn btn-primary btn-sm mt-2">Resend Verification Email</a>
+                Votre adresse e-mail n'est pas vérifiée ! Veuillez consulter votre boîte de réception pour confirmer votre e-mail.
+                <br><a href="{{ path('app_verify_email_resend') }}" class="btn btn-primary btn-sm mt-2">Renvoyer l'e-mail de vérification</a>
             </div>
         {% endif %}
 
-        {# Features Section #}
+        {# Section des fonctionnalités #}
         <section class="features py-5">
             <div class="container">
                 <div class="text-center mb-5">
                     <h2 style="color:#99cc99;">Réalisez vos rêves... et ceux de vos proches !</h2>
-                    <p class="text-muted">Grâce à notre plateforme de wishlist, facilitez vos partages et surprenez vos amis.</p>
+                    <p class="text-muted">Grâce à notre plateforme de listes de souhaits, facilitez vos partages et surprenez vos amis.</p>
                 </div>
                 <div class="row">
                     <div class="col-md-4 text-center mb-4">
                         <i class="fas fa-list feature-icon"></i>
-                        <h4 class="fw-bold">Crée et édite ta wishlist</h4>
+                        <h4 class="fw-bold">Créez et éditez vos listes de souhaits</h4>
                         <p class="text-muted">
-                            Renseigne tes envies et mets-les à jour facilement pour que tout le monde sache ce qui te fait plaisir.
+                            Notez vos envies et mettez-les à jour facilement pour que tout le monde sache ce qui vous fait plaisir.
                         </p>
                     </div>
                     <div class="col-md-4 text-center mb-4">
                         <i class="fas fa-share feature-icon"></i>
-                        <h4 class="fw-bold">Partage-la à tes proches ou rejoins la leur</h4>
+                        <h4 class="fw-bold">Partagez-les avec vos proches ou rejoignez leur liste</h4>
                         <p class="text-muted">
-                            Envoie ta liste à tes amis, ou consulte la leur pour leur faire plaisir et éviter les doublons.
+                            Envoyez votre liste à vos amis ou consultez la leur pour leur faire plaisir tout en évitant les doublons.
                         </p>
                     </div>
                     <div class="col-md-4 text-center mb-4">
                         <i class="fas fa-gift feature-icon"></i>
-                        <h4 class="fw-bold">Réalise leurs souhaits</h4>
+                        <h4 class="fw-bold">Réalisez leurs souhaits</h4>
                         <p class="text-muted">
-                            Découvre ce dont rêvent tes proches et offre-leur des cadeaux qui font mouche à coup sûr !
+                            Découvrez les rêves de vos proches et offrez-leur des cadeaux qui font vraiment plaisir !
                         </p>
                     </div>
                 </div>

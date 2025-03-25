@@ -1,59 +1,103 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Add Item{% endblock %}
+{% block title %}Ajouter un article{% endblock %}
 
 {% block body %}
-    <div class="container mt-5">
-        <h2 class="mb-4">Add a New Item</h2>
+    <div class="container mt-7 d-flex justify-content-center">
+        <div class="card shadow-lg p-4 w-50">
+            <h2 class="card-title text-center mb-4">Ajouter un nouvel article</h2>
 
-        {% if form_errors(form) %}
-            <div class="alert alert-danger">
-                {{ form_errors(form) }}
+            {% if form_errors(form) %}
+                <div class="alert alert-danger">
+                    {{ form_errors(form) }}
+                </div>
+            {% endif %}
+
+            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+            <div class="mb-3">
+                {{ form_label(form.title, 'Titre de l\'article', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.title, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le titre de l\'article'}}) }}
+                {% if form_errors(form.title) %}
+                    <div class="invalid-feedback d-block">
+                        {{ form_errors(form.title) }}
+                    </div>
+                {% endif %}
             </div>
-        {% endif %}
 
-        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
-        <div class="mb-3">
-            {{ form_label(form.title, 'Item Title', {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
-            {% if form_errors(form.title) %}
-                <div class="invalid-feedback d-block">
-                    {{ form_errors(form.title) }}
-                </div>
-            {% endif %}
+            <div class="mb-3">
+                {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder': 'Entrez la description'}}) }}
+                {% if form_errors(form.description) %}
+                    <div class="invalid-feedback d-block">
+                        {{ form_errors(form.description) }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.price, 'Prix (€)', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.price, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le prix'}}) }}
+                {% if form_errors(form.price) %}
+                    <div class="invalid-feedback d-block">
+                        {{ form_errors(form.price) }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.url, 'Lien d\'achat', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.url, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le lien d\'achat'}}) }}
+                {% if form_errors(form.url) %}
+                    <div class="invalid-feedback d-block">
+                        {{ form_errors(form.url) }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-success w-100">Enregistrer</button>
+            </div>
+
+            {{ form_end(form) }}
         </div>
-
-        <div class="mb-3">
-            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
-            {% if form_errors(form.description) %}
-                <div class="invalid-feedback d-block">
-                    {{ form_errors(form.description) }}
-                </div>
-            {% endif %}
-        </div>
-
-        <div class="mb-3">
-            {{ form_label(form.price, 'Price', {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.price, {'attr': {'class': 'form-control'}}) }}
-            {% if form_errors(form.price) %}
-                <div class="invalid-feedback d-block">
-                    {{ form_errors(form.price) }}
-                </div>
-            {% endif %}
-        </div>
-
-        <div class="mb-3">
-            {{ form_label(form.url, 'Purchase URL', {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.url, {'attr': {'class': 'form-control'}}) }}
-            {% if form_errors(form.url) %}
-                <div class="invalid-feedback d-block">
-                    {{ form_errors(form.url) }}
-                </div>
-            {% endif %}
-        </div>
-
-        <button type="submit" class="btn btn-success mt-3">Save</button>
-        {{ form_end(form) }}
     </div>
+
+    <style>
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #218838);
+            border: none;
+            padding: 12px;
+            font-size: 1.1rem;
+            color: white;
+            width: 100%;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #218838, #1e7e34);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+
+        .form-control {
+            border-radius: 8px;
+        }
+    </style>
 {% endblock %}

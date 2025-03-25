@@ -16,31 +16,31 @@
             <!-- Liens de navigation au centre -->
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ path('app_home') }}">Home</a>
+                    <a class="nav-link text-white" href="{{ path('app_home') }}">ACCUEIL</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ path('app_wishlist_list') }}">Wishlists</a>
+                    <a class="nav-link text-white" href="{{ path('app_wishlist_list') }}">LISTES</a>
                 </li>
                 {% if is_granted('ROLE_ADMIN') %}
                     <li class="nav-item">
-                        <a class="nav-link text-warning" href="{{ path('app_admin_dashboard') }}">Admin Dashboard</a>
+                        <a class="nav-link text-warning" href="{{ path('app_admin_dashboard') }}">ADMIN</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-warning" href="{{ path('app_admin_users') }}">User Management</a>
+                        <a class="nav-link text-warning" href="{{ path('app_admin_users') }}">UTILISATEURS</a>
                     </li>
                 {% endif %}
             </ul>
 
-            <!-- Section de droite : User Info & Auth Buttons -->
+            <!-- Section de droite : Infos utilisateur & Boutons d'authentification -->
             <div class="d-flex align-items-center gap-3">
                 <div class="rounded-pill text-white px-3 py-1" style="background:#00B8DE">
-                    Bienvenue, {{ app.user ? app.user.firstName : 'Invité' }}
+                    BIENVENUE, {{ app.user ? app.user.firstName : 'INVITÉ' }}
                 </div>
                 {% if not app.user %}
-                    <a href="{{ path('app_login') }}" class="btn btn-primary" style="border:none;">Login</a>
-                    <a href="{{ path('app_register') }}" class="btn btn-secondary" style="border:none;">Register</a>
+                    <a href="{{ path('app_login') }}" class="btn btn-primary" style="border:none;">CONNEXION</a>
+                    <a href="{{ path('app_register') }}" class="btn btn-secondary" style="border:none;">INSCRIPTION</a>
                 {% else %}
-                    <a href="{{ path('app_logout') }}" class="btn btn-danger" style="border:none;">Logout</a>
+                    <a href="{{ path('app_logout') }}" class="btn btn-danger" style="border:none;">DÉCONNEXION</a>
                 {% endif %}
             </div>
         </div>
