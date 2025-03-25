@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: WishlistRepository::class)]
@@ -29,6 +30,9 @@ class Wishlist
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $deadline = null;
 
+    #[ORM\Column(type: Types::STRING, unique: true)]
+    private ?string $uuid = null;
+
     /**
      * @var Collection<int, Item>
      */
@@ -47,6 +51,7 @@ class Wishlist
 
     public function __construct()
     {
+        $this->uuid = Uuid::v4()->toRfc4122();
         $this->items = new ArrayCollection();
         $this->invitations = new ArrayCollection();
     }
@@ -78,6 +83,10 @@ class Wishlist
         $this->deadline = $deadline;
 
         return $this;
+    }
+
+    public function getUuid(): ?string {
+        return $this->uuid;
     }
 
     /**

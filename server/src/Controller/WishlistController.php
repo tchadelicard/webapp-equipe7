@@ -22,14 +22,17 @@ class WishlistController extends AbstractController
 
 {
     private WishlistService $wishlistService;
+    private WishlistRepository $wishlistRepository;
     private EntityManagerInterface $entityManager;
 
     public function __construct(
         WishlistService $wishlistService,
+        WishlistRepository $wishlistRepository,
         EntityManagerInterface $entityManager
     )
     {
         $this->wishlistService = $wishlistService;
+        $this->wishlistRepository = $wishlistRepository;
         $this->entityManager = $entityManager;
     }
 
@@ -242,11 +245,14 @@ class WishlistController extends AbstractController
         ]);
     }
 
-
-    #[Route('/wishlist/{id}', name: 'view_wishlist')]
-    public function viewWishlist(Wishlist $wishlist): Response
+    #[Route('/public/{uuid}', name: 'public_view')]
+    public function publicView(String $uuid): Response
     {
-        $this->wishlistService->checkOwnerAndInvitedUsers($wishlist);
+        $wishlist = $this->wishlistRepository->findByUuid($uuid);
+
+        if (!$wishlist) {
+            throw $this->createNotFoundException("Wishlist not found");
+        }
 
         return $this->render('wishlist/view.html.twig', [
             'wishlist' => $wishlist

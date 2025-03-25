@@ -37,6 +37,7 @@ security:
   access_control:
     - { path: ^/$, roles: PUBLIC_ACCESS }
     - { path: ^/auth, roles: PUBLIC_ACCESS }
+    - { path: ^/wishlists/public, roles: PUBLIC_ACCESS }
     - { path: ^/admin, roles: ROLE_ADMIN }
     - { path: ^/, roles: ROLE_USER }
 
