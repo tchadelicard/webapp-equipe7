@@ -1,33 +1,48 @@
-<!-- Navigation-->
-<nav class="navbar navbar-expand-lg text-uppercase fixed-top" id="mainNav" style="background:#14223C">
-    <div class="container d-flex justify-content-between align-items-center">
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav" style="background:#14223C">
+    <div class="container">
         <!-- Logo -->
-        <a class="navbar-brand" href="{{ path('app_home') }}">WEBAPP-GROUP7</a>
+        <a class="navbar-brand ml-2 " href="{{ path('app_home') }}">WEBAPP-GROUP7</a>
 
-        <!-- Centered Navigation Links -->
-        <div class="d-flex justify-content-center flex-grow-1">
-            <ul class="nav justify-content-center">
-                <li><a href="{{ path('app_home') }}" class="nav-link px-3 text-white">Home</a></li>
-                <li><a href="{{ path('app_wishlist_list') }}" class="nav-link px-3 text-white">Wishlists</a></li>
+        <!-- Bouton burger (toggler) visible sur mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <!-- Icône burger -->
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Contenu de la navbar qui va se replier sur mobile -->
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <!-- Liens de navigation au centre -->
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ path('app_home') }}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ path('app_wishlist_list') }}">Wishlists</a>
+                </li>
                 {% if is_granted('ROLE_ADMIN') %}
-                    <li><a href="{{ path('app_admin_dashboard') }}" class="nav-link px-3 text-warning">Admin Dashboard</a></li>
-                    <li><a href="{{ path('app_admin_users') }}" class="nav-link px-3 text-warning">User Management</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link text-warning" href="{{ path('app_admin_dashboard') }}">Admin Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-warning" href="{{ path('app_admin_users') }}">User Management</a>
+                    </li>
                 {% endif %}
             </ul>
-        </div>
 
-        <!-- User Info and Auth Buttons -->
-        <div class="d-flex align-items-center gap-3">
-            <div class="rounded-pill text-white px-3 py-1" style="background:#00B8DE">
-                Bienvenue, {{ app.user ? app.user.firstName : 'Invité' }}
+            <!-- Section de droite : User Info & Auth Buttons -->
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-pill text-white px-3 py-1" style="background:#00B8DE">
+                    Bienvenue, {{ app.user ? app.user.firstName : 'Invité' }}
+                </div>
+                {% if not app.user %}
+                    <a href="{{ path('app_login') }}" class="btn btn-primary" style="border:none;">Login</a>
+                    <a href="{{ path('app_register') }}" class="btn btn-secondary" style="border:none;">Register</a>
+                {% else %}
+                    <a href="{{ path('app_logout') }}" class="btn btn-danger" style="border:none;">Logout</a>
+                {% endif %}
             </div>
-
-            {% if not app.user %}
-                <a href="{{ path('app_login') }}" class="btn btn-primary" style="border:none;">Login</a>
-                <a href="{{ path('app_register') }}" class="btn btn-secondary" style="border:none;">Register</a>
-            {% else %}
-                <a href="{{ path('app_logout') }}" class="btn btn-danger" style="border:none;">Logout</a>
-            {% endif %}
         </div>
     </div>
 </nav>
