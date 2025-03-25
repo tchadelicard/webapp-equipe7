@@ -19,7 +19,7 @@ class AdminController extends AbstractController
     public function dashboard(WishlistRepository $wishlistRepo, PurchaseRepository $purchaseRepo): Response
     {
         $topPurchases = $purchaseRepo->findTopExpensivePurchases();
-        $topWishlists = $wishlistRepo->findTopWishlistsByValue();
+        $topWishlists = $wishlistRepo->findTopWishlistsByTotalValue();
 
         return $this->render('admin/dashboard.html.twig', [
             'topPurchases' => $topPurchases,
