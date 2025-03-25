@@ -77,28 +77,38 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('app_admin_users');
     }
 
-    #[Route('/user/{id}/promote', name: 'promote_user')]
-    public function promoteUser(int $id, UserRepository $userRepo, EntityManagerInterface $em): Response
+    #[Route('/user/{id}/toggle-admin', name: 'toggle_admin')]
+    public function toggleAdminRole(int $id, UserRepository $userRepo, EntityManagerInterface $em): Response
     {
         $user = $userRepo->find($id);
-
+    
         if (!$user) {
             $this->addFlash('danger', 'User not found.');
             return $this->redirectToRoute('app_admin_users');
         }
-
-        $roles = $user->getRoles();
-        if (!in_array('ROLE_ADMIN', $roles)) {
-            $roles[] = 'ROLE_ADMIN';
-            $user->setRoles($roles);
-            $em->flush();
-
-            $this->addFlash('success', $user->getEmail().' has been promoted to ADMIN.');
-        } else {
-            $this->addFlash('info', 'User is already an admin.');
+    
+        // Prevent removing own admin rights
+        if ($user->getId() === $this->getUser()->getId()) {
+            $this->addFlash('danger', 'You cannot change your own admin status.');
+            return $this->redirectToRoute('app_admin_users');
         }
-
+    
+        $roles = $user->getRoles();
+    
+        if (in_array('ROLE_ADMIN', $roles)) {
+            // Remove admin role
+            $roles = array_filter($roles, fn($role) => $role !== 'ROLE_ADMIN');
+            $this->addFlash('warning', $user->getEmail() . ' is no longer an admin.');
+        } else {
+            // Add admin role
+            $roles[] = 'ROLE_ADMIN';
+            $this->addFlash('success', $user->getEmail() . ' has been promoted to ADMIN.');
+        }
+    
+        $user->setRoles(array_values($roles)); // reset roles array keys
+        $em->flush();
+    
         return $this->redirectToRoute('app_admin_users');
     }
-
+    
 }

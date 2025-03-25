@@ -52,9 +52,14 @@
                             Delete ❌
                         </a>
                         {% endif %}
-                        {% if 'ROLE_ADMIN' not in user.roles %}
-                            <a href="{{ path('app_admin_promote_user', {'id': user.id}) }}" class="btn btn-info btn-sm">
-                                Make Admin 🛡️
+                        {% if app.user.id != user.id %}
+                            <a href="{{ path('app_admin_toggle_admin', {'id': user.id}) }}"
+                            class="btn btn-sm {% if 'ROLE_ADMIN' in user.roles %}btn-secondary{% else %}btn-info{% endif %}">
+                                {% if 'ROLE_ADMIN' in user.roles %}
+                                    Revoke Admin ❌
+                                {% else %}
+                                    Make Admin 🛡️
+                                {% endif %}
                             </a>
                         {% endif %}
                     </td>                    
