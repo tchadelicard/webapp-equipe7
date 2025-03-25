@@ -40,6 +40,7 @@
                         {% endif %}
                     </td>
                     <td>
+                        {% if app.user.id != user.id %}
                         <a href="{{ path('app_admin_toggle_lock', {'id': user.id}) }}" class="btn btn-warning btn-sm">
                             {% if user.isLocked %}
                                 Unlock 🔓
@@ -50,7 +51,13 @@
                         <a href="{{ path('app_admin_delete_user', {'id': user.id}) }}" class="btn btn-danger btn-sm">
                             Delete ❌
                         </a>
-                    </td>
+                        {% endif %}
+                        {% if 'ROLE_ADMIN' not in user.roles %}
+                            <a href="{{ path('app_admin_promote_user', {'id': user.id}) }}" class="btn btn-info btn-sm">
+                                Make Admin 🛡️
+                            </a>
+                        {% endif %}
+                    </td>                    
                 </tr>
             {% endfor %}
         </tbody>
