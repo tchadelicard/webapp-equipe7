@@ -34,7 +34,7 @@ class WishlistService
         }
 
         foreach ($wishlist->getInvitations() as $invitation) {
-            if ($invitation->getInvitedUser() === $user) {
+            if ($invitation->getInvitedUser() === $user && $invitation->isStatus()) {
                 return;
             }
         }

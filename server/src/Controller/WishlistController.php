@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Controller;
 
 use App\Entity\Item;
@@ -120,7 +119,7 @@ class WishlistController extends AbstractController
     {
         $this->wishlistService->checkOwner($wishlist);
 
-        $publicUrl = $this->generateUrl('wishlist_public_view', ['id' => $wishlist->getId()], false);
+        $publicUrl = $this->generateUrl('app_wishlist_public_view', ['uuid' => $wishlist->getUuid()], false);
 
         // Récupère tous les utilisateurs pour le <select> dans share.html.twig
         $users = $userRepository->findAll();
@@ -139,9 +138,7 @@ class WishlistController extends AbstractController
         UserRepository $userRepository,
         EntityManagerInterface $em
     ): Response {
-        if ($wishlist->getOwner() !== $this->getUser()) {
-            throw $this->createAccessDeniedException();
-        }
+        $this->wishlistService->checkOwner($wishlist);
 
         // Récupère la liste des IDs utilisateurs depuis le formulaire
         $userIds = $request->request->get('users', []);
@@ -180,9 +177,7 @@ class WishlistController extends AbstractController
         UserRepository $userRepository,
         EntityManagerInterface $em
     ): Response {
-        if ($wishlist->getOwner() !== $this->getUser()) {
-            throw $this->createAccessDeniedException();
-        }
+        $this->wishlistService->checkOwner($wishlist);
 
         // Récupère tous les utilisateurs
         $allUsers = $userRepository->findAll();
