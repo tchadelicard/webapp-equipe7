@@ -31,6 +31,10 @@ class WishlistRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findByUuid(string $uuid): ?Wishlist {
+        return $this->findOneBy(['uuid' => $uuid]);
+    }
+
     //    /**
     //     * @return Wishlist[] Returns an array of Wishlist objects
     //     */
