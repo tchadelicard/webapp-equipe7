@@ -6,6 +6,7 @@ use App\Entity\User;
 use Symfony\Component\Security\Core\Exception\LockedException;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAccountStatusException;
 
 class UserChecker implements UserCheckerInterface
 {
@@ -17,7 +18,7 @@ class UserChecker implements UserCheckerInterface
     public function checkPostAuth(UserInterface $user): void
     {
         if ($user instanceof User && $user->isLocked()) {
-            throw new LockedException('Your account is locked.');
+            throw new CustomUserMessageAccountStatusException('Your account is locked.');
         }
     }
 }
