@@ -3,7 +3,7 @@
 {% block title %}Preuve d'achat{% endblock %}
 
 {% block body %}
-    <h2>Preuve d'achat pour {{ item.name }}</h2>
+    <h2>Preuve d'achat pour {{ item.title }}</h2>
     
     {% if purchase and purchase.buyer == user %}
         <p>Vous avez déjà acheté cet article.</p>
@@ -20,9 +20,9 @@
         <p>Ce cadeau a été acheté par {{ purchase.buyer.username }}.</p>
         <p>Message : {{ purchase.message }}</p>
     {% else %}
-        <form action="{{ path('purchase_create', {'id': item.id}) }}" method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data">
             <label for="proof">Téléverser une preuve d'achat :</label>
-            <input type="file" id="proof" name="proof" accept="image/*,application/pdf" required>
+            <input type="file" id="proof" name="proof_directory" accept="image/*,application/pdf" required>
 
             <label for="message">Message de félicitations :</label>
             <textarea id="message" name="message" required></textarea>
@@ -30,4 +30,16 @@
             <button type="submit">Valider</button>
         </form>
     {% endif %}
+    <style>
+        body {
+    margin: 20;
+    padding:20;
+    font-family: Arial, sans-serif; /* Ajout d'une police de caractère pour une meilleure lisibilité */
+}
+
+h2 {
+    margin-bottom: 100px; /* Espacement sous le titre */
+}
+
+    </style>
 {% endblock %}
