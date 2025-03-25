@@ -1,48 +1,75 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} {{ wishlist.name }} {% endblock %}
+{% block title %}{{ wishlist.name }}{% endblock %}
 
 {% block body %}
-    <h1> {{ wishlist.name }}</h1>
+    <div class="container mt-7">
+        <h1 class="text-center mb-4">{{ wishlist.name }}</h1>
 
-    <button onclick="sortByPrice('asc')"> Trier par prix croissant</button>
-    <button onclick="sortByPrice('desc')"> Trier par prix décroissant</button>
+        {# Improved Sorting Buttons #}
+        <div class="d-flex justify-content-center mb-4">
+            <div class="btn-group" role="group" aria-label="Sorting options">
+                <button class="btn btn-outline-primary" onclick="sortByPrice('asc')">Trier par prix croissant</button>
+                <button class="btn btn-outline-primary" onclick="sortByPrice('desc')">Trier par prix décroissant</button>
+            </div>
+        </div>
 
-    <ul id="wishlist">
-        {% for item in wishlist.items %}
-            {% set isPurchased = item.purchase is not same as(null) %}
-            <li class="{% if isPurchased %}grayed-out{% endif %}" 
-                onmouseenter="showDetails(this)" 
-                onmouseleave="hideDetails(this)">
-                
-                <h2>{{ item.title }}</h2>
-                <p>{{ item.description }}</p>
-                <p>Prix: {{ item.price }}€</p>
-                <button onclick="openPurchaseLinks('{{item.url}}', 'wishlist/upload-proof')">Acheter</button>
+        <ul id="wishlist" class="list-group">
+            {% for item in wishlist.items %}
+                {% set isPurchased = item.purchase is not same as(null) %}
+                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap {% if isPurchased %}grayed-out{% endif %}">
 
-                {% if isPurchased %}
-                    <div class="purchase-details hidden">
-                        <p>Acheté par : {{ item.purchase.buyer.firstName }} {{ item.purchase.buyer.lastName }}</p>
-                        <p>Message : {{ item.purchase.congratulatoryText }}</p>
+                    <div class="item-info w-75">
+                        <h5 class="mb-1">{{ item.title }}</h5>
+                        <p class="mb-1">{{ item.description }}</p>
+                        <p class="mb-1"><strong>Prix:</strong> <span>{{ item.price }}€</span></p>
                     </div>
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
+
+                    <div class="item-actions">
+                        {% if isPurchased %}
+                            {# Display the "Voir l'achat" button #}
+                            <button class="btn btn-info" onclick="showPurchaseDetails('{{ item.purchase.buyer.firstName }}', '{{ item.purchase.buyer.lastName }}', '{{ item.purchase.congratulatoryText }}')">Voir l'achat</button>
+                        {% else %}
+                            {# Display the "Acheter" button #}
+                            <a href="{{ item.url }}" target="_blank" class="btn btn-success">Acheter</a>
+                        {% endif %}
+                    </div>
+                </li>
+            {% else %}
+                <li class="list-group-item text-center text-muted">
+                    Aucun article dans cette wishlist pour l'instant.
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {# Purchase Details Modal #}
+    <div class="modal fade" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="purchaseModalLabel">Détails de l'achat</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Acheté par:</strong> <span id="purchaseBuyer"></span></p>
+                    <p><strong>Message:</strong> <span id="purchaseMessage"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        function openPurchaseLinks(purchaseUrl, proofUploadUrl) {
-            window.open(purchaseUrl, '_blank');  // Ouvre la page d'achat
-            window.open(proofUploadUrl, '_blank');  // Ouvre la page d'upload de preuve
-        }
-
         function sortByPrice(order) {
             let list = document.getElementById('wishlist');
             let items = Array.from(list.children);
 
             items.sort((a, b) => {
-                let priceA = parseFloat(a.querySelector('p:nth-of-type(2)').textContent.replace('Prix: ', '').replace('€', ''));
-                let priceB = parseFloat(b.querySelector('p:nth-of-type(2)').textContent.replace('Prix: ', '').replace('€', ''));
+                let priceA = parseFloat(a.querySelector('.item-info p span').textContent.replace('€', ''));
+                let priceB = parseFloat(b.querySelector('.item-info p span').textContent.replace('€', ''));
                 return order === 'asc' ? priceA - priceB : priceB - priceA;
             });
 
@@ -50,59 +77,58 @@
             items.forEach(item => list.appendChild(item));
         }
 
-        function showDetails(element) {
-            let details = element.querySelector('.purchase-details');
-            if (details) {
-                details.classList.remove('hidden');
-            }
-        }
-
-        function hideDetails(element) {
-            let details = element.querySelector('.purchase-details');
-            if (details) {
-                details.classList.add('hidden');
-            }
+        function showPurchaseDetails(firstName, lastName, message) {
+            document.getElementById('purchaseBuyer').textContent = firstName + ' ' + lastName;
+            document.getElementById('purchaseMessage').textContent = message;
+            var purchaseModal = new bootstrap.Modal(document.getElementById('purchaseModal'));
+            purchaseModal.show();
         }
     </script>
 
     <style>
-        body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif; /* Ajout d'une police de caractère pour une meilleure lisibilité */
-}
+        /* Enhanced list item spacing and styling */
+        .list-group-item {
+            margin-bottom: 15px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
 
-h1 {
-    margin-bottom: 50px; /* Espacement sous le titre */
-}
+        .list-group-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
 
-button {
-    margin: 20px 10px; /* Espacement des boutons */
-}
-
-ul#wishlist {
-    padding: 5;
-    list-style-type: none; /* Enlève les puces */
-}
-
-ul#wishlist li {
-    padding: 10px;
-    margin: 15px 0; 
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-}
         .grayed-out {
+            opacity: 0.7;
             color: gray;
         }
-        .purchase-details {
-            background-color: rgba(21, 247, 82, 0.73);
-            padding: 5px;
-            border-radius: 5px;
-            margin-top: 5px;
+
+        /* Button styling */
+        .btn-success, .btn-info {
+            padding: 8px 16px;
+            border-radius: 8px;
         }
-        .hidden {
-            display: none;
+
+        .btn-outline-primary {
+            border-radius: 8px;
+            margin: 0 5px;
+        }
+
+        .btn:hover, .btn:focus {
+            opacity: 0.9;
+        }
+
+        /* Better spacing for the buttons */
+        .btn-group .btn {
+            min-width: 180px;
+        }
+
+        /* Modal styling */
+        .modal-content {
+            border-radius: 12px;
         }
     </style>
 {% endblock %}
