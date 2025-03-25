@@ -7620,6 +7620,14 @@ textarea.form-control-lg {
   margin-top: 3rem !important;
 }
 
+.mt-6 {
+  margin-top: 6rem !important;
+}
+
+.mt-7 {
+  margin-top: 12rem !important;
+}
+
 .mt-auto {
   margin-top: auto !important;
 }

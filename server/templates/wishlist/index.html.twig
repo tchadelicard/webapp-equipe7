@@ -38,11 +38,11 @@
     <section class="page-section portfolio" id="portfolio">
       <div class="container">
         <h2 class="page-section-heading text-center text-secondary mb-0">Mes Wishlists</h2>
-        {% if wishlists|length == 0 %}
+        {% if user.wishlists|length == 0 %}
           <h3 class="text-center" style="font-size: 2.5rem; margin-top: 2rem;">Aucune wishlist en cours</h3>
         {% else %}
           <div class="row justify-content-center">
-            {% for wishlist in wishlists %}
+            {% for wishlist in user.wishlists %}
               <div class="col-md-6 col-lg-4 mb-5">
                 <div class="portfolio-item mx-auto" data-bs-toggle="modal" data-bs-target="#portfolioModal{{ loop.index }}">
                   <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100" style="background:#00B8DE">
@@ -76,6 +76,36 @@
             {% endfor %}
           </div>
         {% endif %}
+      </div>
+      <div class="container">
+        <h2 class="page-section-heading text-center text-secondary mb-0">Wishlists où je suis collaborateur</h2>
+          <div class="row justify-content-center">
+            {% set length = 0 %}
+            {% for invitation in user.invitations %}
+              {% if invitation.status %}
+                {% set wishlist = invitation.wishlist %}
+                <div class="col-md-6 col-lg-4 mb-5">
+                  <div class="portfolio-item mx-auto" data-bs-toggle="modal" data-bs-target="#portfolioModal{{ loop.index }}">
+                    <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100" style="background:#00B8DE">
+                      <a href="{{ path('app_wishlist_items', {'id': wishlist.id, 'wishlist': wishlist}) }}">
+                        <div class="portfolio-item-caption-content text-center text-white m-2">
+                          <i class="fas fa-list fa-2x"></i>
+                        </div>
+                      </a>
+                    </div>
+                    <img class="img-fluid" src="{{ asset('images/gift_bg.png') }}" alt="Wishlist item">
+                    <div class="wishlist-name text-center mt-2">
+                      {{ wishlist.name }}
+                    </div>
+                  </div>
+                </div>
+                {% set length = length + 1 %}
+              {% endif %}
+            {% endfor %}
+            {% if length == 0 %}
+              <h3 class="text-center" style="font-size: 2.5rem; margin-top: 2rem;">Aucune wishlist en cours</h3>
+            {% endif %}
+          </div>
       </div>
     </section>
 {% endblock %}

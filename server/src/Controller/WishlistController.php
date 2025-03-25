@@ -42,10 +42,8 @@ class WishlistController extends AbstractController
     public function list(WishlistRepository $wishlistRepository): Response
     {
         $user = $this->getUser();
-        $wishlists = $wishlistRepository->findBy(['owner' => $user]);
 
         return $this->render('wishlist/index.html.twig', [
-            'wishlists' => $wishlists,
             'user' => $user,
         ]);
     }
