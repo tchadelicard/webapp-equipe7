@@ -2,6 +2,55 @@
 
 {% block title %}Welcome to My App{% endblock %}
 
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    /* Style de la section Hero */
+
+    .hero-section {
+      background: url('{{ asset('images/background.png') }}') center center/cover no-repeat;
+      color: #fff;
+      padding: 100px 0;
+      text-align: center;
+      position: relative;
+    }
+    .hero-section .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+    /* Styles pour la section des fonctionnalités */
+    .features .feature-icon {
+      font-size: 3rem;
+      color: #00B8DE;
+      margin-bottom: 1rem;
+    }
+
+    body {
+        /* Adapte la valeur en fonction de la hauteur exacte de ta navbar */
+        padding-top: 70px; 
+        margin: 0; /* si tu veux aussi t'assurer qu'il n'y a aucune marge */
+      }
+      .container {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        /* Pour forcer l'usage de la pleine largeur, tu peux également ajouter : */
+        max-width: 100% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+  
+  </style>
+{% endblock %}
+
+
 {% block body %}
     <div class="d-flex justify-content-center align-items-center vh-100">
         <div class="container text-center">
@@ -28,10 +77,58 @@
                 </div>
             {% endif %}
 
-            <div class="text-center">
-                <h1>Welcome, {{ app.user ? app.user.userIdentifier : 'Guest' }}! 👋</h1>
-                <p class="lead">This is your homepage. Explore the app and get started.</p>
-            </div>
+            {# contenu page d'accueil#}
+            <section class="hero-section">
+              <div class="overlay"></div>
+              <div class="container hero-content">
+                <h1 class="display-4 fw-bold">Partagez vos envies avec le monde !</h1>
+                <p class="lead">Créez, éditez et partagez vos listes de souhaits en toute simplicité</p>
+                <p>
+                  <a href="{{ path('app_register') }}" class="btn btn-primary btn-lg" style="background-color: #00B8DE;">Commencer maintenant</a>
+                </p>
+              </div>
+            </section>
+            
+            <section class="features py-5">
+              <div class="container">
+                <div class="text-center mb-5">
+                  <h2 style="color:#99cc99;">Réalisez vos rêves... et ceux de vos proches !</h2>
+                  <p class="text-muted">Grâce à notre plateforme de wishlist, facilitez vos partages et surprenez vos amis.</p>
+                </div>
+                <div class="row">
+                  <!-- Colonne 1 -->
+                  <div class="col-md-4 text-center mb-4">
+                    <i class="fas fa-list feature-icon"></i>
+                    <h4 class="fw-bold">Crée et édite ta wishlist</h4>
+                    <p class="text-muted">
+                      Renseigne tes envies et mets-les à jour facilement pour que tout le monde sache ce qui te fait plaisir.
+                    </p>
+                  </div>
+                  <!-- Colonne 2 -->
+                  <div class="col-md-4 text-center mb-4">
+                    <i class="fas fa-share feature-icon"></i>
+                    <h4 class="fw-bold">Partage-la à tes proches ou rejoins la leur</h4>
+                    <p class="text-muted">
+                      Envoie ta liste à tes amis, ou consulte la leur pour leur faire plaisir et éviter les doublons.
+                    </p>
+                  </div>
+                  <!-- Colonne 3 -->
+                  <div class="col-md-4 text-center mb-4">
+                    <i class="fas fa-gift feature-icon"></i>
+                    <h4 class="fw-bold">Réalise leurs souhaits</h4>
+                    <p class="text-muted">
+                      Découvre ce dont rêvent tes proches et offre-leur des cadeaux qui font mouche à coup sûr !
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            {# fin contenu page d'accueil#}
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+     <script src="{{ asset('js/scripts.js') }}"></script>
+     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 {% endblock %}
