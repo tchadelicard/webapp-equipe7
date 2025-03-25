@@ -18,7 +18,7 @@ class UserChecker implements UserCheckerInterface
     public function checkPostAuth(UserInterface $user): void
     {
         if ($user instanceof User && $user->isLocked()) {
-            throw new CustomUserMessageAccountStatusException('Your account is locked.');
+            throw new CustomUserMessageAccountStatusException('Your account is locked .');
         }
     }
 }
