@@ -30,8 +30,9 @@
                             {# Display the "Voir l'achat" button #}
                             <button class="btn btn-info" onclick="showPurchaseDetails('{{ item.purchase.buyer.firstName }}', '{{ item.purchase.buyer.lastName }}', '{{ item.purchase.congratulatoryText }}')">Voir l'achat</button>
                         {% else %}
+                            {% set purchaseCreateUrl = url('purchase_create', {'itemId': item.id }) %}
                             {# Display the "Acheter" button #}
-                            <button onclick="openPurchaseLinks('{{ item.url }}', '/purchase/{{item.id}}/create')">Acheter</button>
+                            <button class="btn btn-success" onclick="openPurchaseLinks('{{ item.url }}', '{{ purchaseCreateUrl }}')">Acheter</button>
                         {% endif %}
                     </div>
                 </li>
