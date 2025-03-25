@@ -203,7 +203,7 @@ class WishlistController extends AbstractController
 
         $this->addFlash('success', 'La wishlist a été partagée avec tous les utilisateurs.');
 
-        return $this->redirectToRoute('app_wishlist_list');
+        return $this->redirectToRoute('app_home');
     }
 
     #[Route('/{id}/items', name: 'items', methods: ['GET'])]
