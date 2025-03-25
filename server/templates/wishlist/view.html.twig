@@ -31,7 +31,7 @@
                             <button class="btn btn-info" onclick="showPurchaseDetails('{{ item.purchase.buyer.firstName }}', '{{ item.purchase.buyer.lastName }}', '{{ item.purchase.congratulatoryText }}')">Voir l'achat</button>
                         {% else %}
                             {# Display the "Acheter" button #}
-                            <a href="{{ item.url }}" target="_blank" class="btn btn-success">Acheter</a>
+                            <button onclick="openPurchaseLinks('{{ item.url }}', '/purchase/{{item.id}}/create')">Acheter</button>
                         {% endif %}
                     </div>
                 </li>
@@ -63,6 +63,10 @@
     </div>
 
     <script>
+        function openPurchaseLinks(purchaseUrl, proofUploadUrl) {
+            window.open(purchaseUrl, '_blank'); 
+            window.open(proofUploadUrl, '_blank'); 
+        }
         function sortByPrice(order) {
             let list = document.getElementById('wishlist');
             let items = Array.from(list.children);

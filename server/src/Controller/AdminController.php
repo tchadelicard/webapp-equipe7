@@ -19,7 +19,7 @@ class AdminController extends AbstractController
     public function dashboard(WishlistRepository $wishlistRepo, PurchaseRepository $purchaseRepo): Response
     {
         $topPurchases = $purchaseRepo->findTopExpensivePurchases();
-        $topWishlists = $wishlistRepo->findTopWishlistsByValue();
+        $topWishlists = $wishlistRepo->findTopWishlistsByTotalValue();
 
         return $this->render('admin/dashboard.html.twig', [
             'topPurchases' => $topPurchases,
@@ -44,6 +44,11 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('app_admin_users');
         }
 
+        if ($user->getId() === $this->getUser()->getId()) {
+            $this->addFlash('danger', 'You cannot lock yourself.');
+            return $this->redirectToRoute('app_admin_users');
+        }        
+
         $user->setIsLocked(!$user->isLocked());
         $entityManager->flush();
 
@@ -60,10 +65,40 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('app_admin_users');
         }
 
+        if ($user->getId() === $this->getUser()->getId()) {
+            $this->addFlash('danger', 'You cannot delete yourself.');
+            return $this->redirectToRoute('app_admin_users');
+        }
+        
         $entityManager->remove($user);
         $entityManager->flush();
 
         $this->addFlash('success', 'User deleted successfully.');
         return $this->redirectToRoute('app_admin_users');
     }
+
+    #[Route('/user/{id}/promote', name: 'promote_user')]
+    public function promoteUser(int $id, UserRepository $userRepo, EntityManagerInterface $em): Response
+    {
+        $user = $userRepo->find($id);
+
+        if (!$user) {
+            $this->addFlash('danger', 'User not found.');
+            return $this->redirectToRoute('app_admin_users');
+        }
+
+        $roles = $user->getRoles();
+        if (!in_array('ROLE_ADMIN', $roles)) {
+            $roles[] = 'ROLE_ADMIN';
+            $user->setRoles($roles);
+            $em->flush();
+
+            $this->addFlash('success', $user->getEmail().' has been promoted to ADMIN.');
+        } else {
+            $this->addFlash('info', 'User is already an admin.');
+        }
+
+        return $this->redirectToRoute('app_admin_users');
+    }
+
 }
