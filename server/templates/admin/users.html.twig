@@ -1,31 +1,31 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}User Management{% endblock %}
+{% block title %}Gestion des utilisateurs{% endblock %}
 
 {% block body %}
-<div class="container mt-7">
-    <h2 class="text-center">User Management</h2>
+    <div class="container mt-7">
+        <h2 class="text-center">Gestion des utilisateurs</h2>
 
-    {# Flash Messages for User Actions #}
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success text-center alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    {% endfor %}
+        {# Messages flash pour les actions utilisateur #}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success text-center alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+            </div>
+        {% endfor %}
 
-    <table class="table table-striped mt-3">
-        <thead class="table-dark">
+        <table class="table table-striped mt-3">
+            <thead class="table-dark">
             <tr>
                 <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
+                <th>Prénom</th>
+                <th>Nom</th>
                 <th>Email</th>
-                <th>Status</th>
+                <th>Statut</th>
                 <th>Actions</th>
             </tr>
-        </thead>
-        <tbody>
+            </thead>
+            <tbody>
             {% for user in users %}
                 <tr>
                     <td>{{ user.id }}</td>
@@ -34,38 +34,38 @@
                     <td>{{ user.email }}</td>
                     <td>
                         {% if user.isLocked %}
-                            <span class="text-danger">Locked 🔒</span>
+                            <span class="text-danger">Verrouillé 🔒</span>
                         {% else %}
-                            <span class="text-success">Active ✅</span>
+                            <span class="text-success">Actif ✅</span>
                         {% endif %}
                     </td>
                     <td>
                         {% if app.user.id != user.id %}
-                        <a href="{{ path('app_admin_toggle_lock', {'id': user.id}) }}" class="btn btn-warning btn-sm">
-                            {% if user.isLocked %}
-                                Unlock 🔓
-                            {% else %}
-                                Lock 🔒
-                            {% endif %}
-                        </a>
-                        <a href="{{ path('app_admin_delete_user', {'id': user.id}) }}" class="btn btn-danger btn-sm">
-                            Delete ❌
-                        </a>
+                            <a href="{{ path('app_admin_toggle_lock', {'id': user.id}) }}" class="btn btn-warning btn-sm">
+                                {% if user.isLocked %}
+                                    Déverrouiller 🔓
+                                {% else %}
+                                    Verrouiller 🔒
+                                {% endif %}
+                            </a>
+                            <a href="{{ path('app_admin_delete_user', {'id': user.id}) }}" class="btn btn-danger btn-sm">
+                                Supprimer ❌
+                            </a>
                         {% endif %}
                         {% if app.user.id != user.id %}
                             <a href="{{ path('app_admin_toggle_admin', {'id': user.id}) }}"
-                            class="btn btn-sm {% if 'ROLE_ADMIN' in user.roles %}btn-secondary{% else %}btn-info{% endif %}">
+                               class="btn btn-sm {% if 'ROLE_ADMIN' in user.roles %}btn-secondary{% else %}btn-info{% endif %}">
                                 {% if 'ROLE_ADMIN' in user.roles %}
-                                    Revoke Admin ❌
+                                    Retirer Admin ❌
                                 {% else %}
-                                    Make Admin 🛡️
+                                    Promouvoir Admin 🛡️
                                 {% endif %}
                             </a>
                         {% endif %}
-                    </td>                    
+                    </td>
                 </tr>
             {% endfor %}
-        </tbody>
-    </table>
-</div>
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
