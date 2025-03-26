@@ -27,11 +27,9 @@
 
                     <div class="item-actions">
                         {% if isPurchased %}
-                            {# Display the "Voir l'achat" button #}
                             <button class="btn btn-info" onclick="showPurchaseDetails('{{ item.purchase.buyer.firstName }}', '{{ item.purchase.buyer.lastName }}', '{{ item.purchase.congratulatoryText }}')">Voir l'achat</button>
                         {% else %}
                             {% set purchaseCreateUrl = url('purchase_create', {'itemId': item.id }) %}
-                            {# Display the "Acheter" button #}
                             <button class="btn btn-success" onclick="openPurchaseLinks('{{ item.url }}', '{{ purchaseCreateUrl }}')">Acheter</button>
                         {% endif %}
                     </div>
@@ -65,9 +63,10 @@
 
     <script>
         function openPurchaseLinks(purchaseUrl, proofUploadUrl) {
-            window.open(purchaseUrl, '_blank'); 
-            window.open(proofUploadUrl, '_blank'); 
+            window.open(purchaseUrl, '_blank'); // Ouvre l'URL d'achat dans un nouvel onglet
+            window.location.href = proofUploadUrl; // Redirige vers la page de preuve d'achat
         }
+
         function sortByPrice(order) {
             let list = document.getElementById('wishlist');
             let items = Array.from(list.children);
@@ -89,7 +88,6 @@
             purchaseModal.show();
         }
     </script>
-
     <style>
         /* Enhanced list item spacing and styling */
         .list-group-item {

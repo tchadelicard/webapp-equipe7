@@ -38,7 +38,7 @@
                                     <button class="btn btn-info" onclick="showPurchaseDetails('{{ item.purchase.buyer.firstName }}', '{{ item.purchase.buyer.lastName }}', '{{ item.purchase.congratulatoryText }}')">Voir l'achat</button>
                                 {% else %}
                                     {% set purchaseCreateUrl = url('purchase_create', {'itemId': item.id }) %}
-                                    <button class="btn btn-success" onclick="openPurchaseLinks('{{ item.url }}', '{{ purchaseCreateUrl }}')">Acheter</button>
+                                    <button class="btn btn-success" onclick="openPurchaseLinks('{{ purchaseCreateUrl }}', '{{ item.url }}')">Acheter</button>
                                 {% endif %}
                                 <a href="{{ path('app_item_edit', {id: item.id}) }}" class="btn btn-warning">Modifier</a>
                                 <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ item.id }}">Supprimer</button>
@@ -113,9 +113,9 @@
     </div>
 
     <script>
-        function openPurchaseLinks(purchaseUrl, proofUploadUrl) {
-            window.open(purchaseUrl, '_blank');
-            window.open(proofUploadUrl, '_blank');
+        function openPurchaseLinks(purchaseCreateUrl, purchaseUrl) {
+            window.open(purchaseUrl, '_blank'); // Ouvre l'URL d'achat dans un nouvel onglet
+            window.location.href = purchaseCreateUrl; // Redirige vers la page de preuve d'achat
         }
 
         function sortByPrice(order) {
@@ -148,7 +148,7 @@
             shareLink.select();
             shareLink.setSelectionRange(0, 99999);
             navigator.clipboard.writeText(shareLink.value);
-            alert("Link copied to clipboard!");
+            alert("Lien copié dans le presse-papiers !");
         }
     </script>
 

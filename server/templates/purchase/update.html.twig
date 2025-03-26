@@ -1,10 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
-    <h2>Preuve d'achat pour {{ item.title }}</h2>
+{% block title %}Preuve d'achat - {{ item.title }}{% endblock %}
 
-    {{ form_start(form) }}
-        {{ form_row(form.congratulatoryText) }}
-        <button type="submit">Valider</button>
-    {{ form_end(form) }}
+{% block body %}
+    <div class="container mt-7">
+        <h2 class="mb-3">Preuve d'achat pour {{ item.title }}</h2>
+
+        {{ form_start(form, {'attr': {'class': 'form-group'}}) }}
+        <div class="mb-3">
+            {{ form_row(form.congratulatoryText) }}
+        </div>
+        <button type="submit" class="btn btn-primary">Valider</button>
+        {{ form_end(form) }}
+    </div>
 {% endblock %}
