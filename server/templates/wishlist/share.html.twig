@@ -3,42 +3,27 @@
 {% block title %}Partager la Wishlist{% endblock %}
 
 {% block body %}
+  <div class="mycontainer">
+    <!-- Partie gauche : Affichage de l'image -->
+    <div class="left">
+      <img src="{{ asset('images/new_wishlist.jpg') }}" alt="Illustration partage">
+    </div>
+    <div class="right">
+      <h1>Partagez cette wishlist à vos proches</h1>
+      <p>Sélectionnez les utilisateurs à inviter :</p>
 
-    {# Bouton retour en haut à droite #}
-    <a href="{{ path('app_wishlist_list') }}" class="back-button bg-primary" aria-label="Retour vers la liste des wishlists">
-        <i class="fas fa-arrow-left"></i>
-    </a>
-<div class="mycontainer">
-  <!-- Partie gauche : Affichage de l'image -->
-  <div class="left">
-    <img src="{{ asset('images/sharePic.png') }}" alt="Illustration partage">
+      {{ form_start(form) }}
+      <div class="form-group">
+        {{ form_widget(form.user_ids, {'attr': {'class': 'form-control text-dark bg-white', 'style': 'color: #000; background-color: #fff;'}}) }}
+      </div>
+      <button type="submit" class="btn btn-primary mt-3">Partager</button>
+      {{ form_end(form) }}
+    </div>
   </div>
-  <!-- Partie droite : Contenu texte et formulaires de partage -->
-  <div class="right">
-    <h1>Partagez cette wishlist à vos proches</h1>
-    <p>Ils pourront alors consulter votre liste et réserver des cadeaux.</p>
-    
-    <hr>
-    
-    <h4>Copiez le lien ci-dessous et envoyez-le à vos proches :</h4>
-    <label for="publicUrl1">Lien de partage :</label>
-    <input id="publicUrl1" type="text" value="{{ public_url }}" readonly>
-    <form action="{{ path('app_wishlist_share_to_users', {'id': wishlist.id}) }}" method="POST">
-      <select name="users[]" multiple>
-        {% for user in users %}
-          <option value="{{ user.id }}">{{ user.firstName }} {{ user.lastName }}</option>
-        {% endfor %}
-      </select>
-      <button type="submit">envoyez à</button>
-    </form>
-    
-    <hr>
-    
-    <label for="publicUrl2">Lien de partage :</label>
-    <input id="publicUrl2" type="text" value="{{ public_url }}" readonly>
-    <form action="{{ path('app_wishlist_share_to_all', {'id': wishlist.id}) }}" method="POST">
-      <button type="submit">partager à tous</button>
-    </form>
-  </div>
-</div>
+
+  <style>
+    .right label {
+      color: #14223C;
+    }
+  </style>
 {% endblock %}

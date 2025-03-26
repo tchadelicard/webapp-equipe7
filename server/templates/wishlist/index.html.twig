@@ -28,7 +28,7 @@
         <a href="{{ path('app_wishlist_new') }}" class="btn btn-secondary btn-lg me-3">
           <i class="fas fa-plus me-1"></i> Ajouter une nouvelle wishlist
         </a>
-        <a href="#" class="btn btn-secondary btn-lg">
+        <a href="{{ path('app_invitation_list') }}" class="btn btn-secondary btn-lg">
           <i class="fas fa-envelope me-1"></i> Invitations
         </a>
       </div>
@@ -37,6 +37,20 @@
     <!-- Wishlist Section-->
     <section class="page-section portfolio" id="portfolio">
       <div class="container">
+        <div class="flash-messages">
+          {% for message in app.flashes('success') %}
+            <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+            </div>
+          {% endfor %}
+          {% for message in app.flashes('error') %}
+            <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+            </div>
+          {% endfor %}
+        </div>
         <h2 class="page-section-heading text-center text-secondary mb-0">Mes Wishlists</h2>
         {% if user.wishlists|length == 0 %}
           <h3 class="text-center" style="font-size: 2.5rem; margin-top: 2rem;">Aucune wishlist en cours</h3>

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Item;
 use App\Entity\Wishlist;
 use App\Entity\Invitation;
+use App\Form\InviteUserType;
 use App\Form\ItemType;
 use App\Form\WishlistType;
 use App\Repository\UserRepository;
@@ -14,7 +15,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('/wishlists', name: 'app_wishlist_')]
 class WishlistController extends AbstractController
@@ -109,64 +113,64 @@ class WishlistController extends AbstractController
         return $this->redirectToRoute('app_wishlist_list');
     }
 
-    /**
-     * Partager une wishlist (générer une URL publique)
-     */
-    #[Route('/{id}/share', name: 'share', methods: ['GET'])]
-    public function share(Wishlist $wishlist, UserRepository $userRepository): Response
-    {
-        $this->wishlistService->checkOwner($wishlist);
-
-        $publicUrl = $this->generateUrl('app_wishlist_public_view', ['uuid' => $wishlist->getUuid()], false);
-
-        // Récupère tous les utilisateurs pour le <select> dans share.html.twig
-        $users = $userRepository->findAll();
-
-        return $this->render('wishlist/share.html.twig', [
-            'wishlist' => $wishlist,
-            'public_url' => $publicUrl,
-            'users' => $users,  
-        ]);
-    }
-
-    #[Route('/{id}/share/users', name: 'share_to_users', methods: ['POST'])]
-    public function shareToUsers(
+    #[Route('/{id}/share', name: 'share', methods: ['GET', 'POST'])]
+    public function share(
         Request $request,
         Wishlist $wishlist,
         UserRepository $userRepository,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        MailerInterface $mailer
     ): Response {
         $this->wishlistService->checkOwner($wishlist);
 
-        // Récupère la liste des IDs utilisateurs depuis le formulaire
-        $userIds = $request->request->get('users', []);
+        $form = $this->createForm(InviteUserType::class);
+        $form->handleRequest($request);
 
-        // Trouve les utilisateurs correspondants
-        $selectedUsers = $userRepository->findBy(['id' => $userIds]);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $userIds = $form->get('user_ids')->getData();
+            $selectedUsers = $userRepository->findBy(['id' => $userIds]);
 
-        foreach ($selectedUsers as $user) {
-            // Vérifie si une invitation n'existe pas déjà pour (user, wishlist)
-            $existingInvitation = $em->getRepository(Invitation::class)->findOneBy([
-                'invitedUser' => $user,
-                'wishlist' => $wishlist,
-            ]);
+            foreach ($selectedUsers as $user) {
+                $existingInvitation = $em->getRepository(Invitation::class)->findOneBy([
+                    'invitedUser' => $user,
+                    'wishlist' => $wishlist,
+                ]);
 
-            // Si pas d'invitation existante, on la crée
-            if (!$existingInvitation) {
-                $invitation = new Invitation();
-                $invitation->setInvitedUser($user);
-                $invitation->setWishlist($wishlist);
-                $invitation->setStatus(false); // Par exemple, false = en attente
+                if (!$existingInvitation) {
+                    $invitation = new Invitation();
+                    $invitation->setInvitedUser($user);
+                    $invitation->setWishlist($wishlist);
+                    $invitation->setStatus(false);
+                    $em->persist($invitation);
 
-                $em->persist($invitation);
+                    $acceptUrl = $this->generateUrl('app_invitation_accept', ['id' => $wishlist->getId(), 'userId' => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+                    $declineUrl = $this->generateUrl('app_invitation_decline', ['id' => $wishlist->getId(), 'userId' => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+                    $email = (new Email())
+                        ->from('noreply@wishlist.com')
+                        ->to($user->getEmail())
+                        ->subject('Invitation à consulter une wishlist')
+                        ->html($this->renderView('wishlist/invitation_email.html.twig', [
+                            'user' => $user,
+                            'wishlist' => $wishlist,
+                            'accept_url' => $acceptUrl,
+                            'decline_url' => $declineUrl
+                        ]));
+
+                    $mailer->send($email);
+                }
             }
+
+            $em->flush();
+
+            $this->addFlash('success', 'La wishlist a été partagée avec les utilisateurs sélectionnés.');
+            return $this->redirectToRoute('app_wishlist_list');
         }
 
-        $em->flush();
-
-        $this->addFlash('success', 'La wishlist a été partagée avec les utilisateurs sélectionnés.');
-
-        return $this->redirectToRoute('app_wishlist_list');
+        return $this->render('wishlist/share.html.twig', [
+            'wishlist' => $wishlist,
+            'form' => $form->createView(),
+        ]);
     }
 
     #[Route('/{id}/share/all', name: 'share_to_all', methods: ['POST'])]

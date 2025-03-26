@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Confirmation d'Invitation{% endblock %}
+
+{% block body %}
+    <div class="container confirmation-container">
+        <div class="confirmation-card bg-light p-4">
+            {% if success %}
+                <h2 class="text-success">Succès</h2>
+                <p class="icon-success">✔️</p>
+                <p>{{ message }}</p>
+            {% else %}
+                <h2 class="text-danger">Erreur</h2>
+                <p class="icon-error">❌</p>
+                <p>{{ message }}</p>
+            {% endif %}
+            <a href="{{ path('app_home') }}" class="btn btn-primary mt-3">Retour à l'accueil</a>
+        </div>
+    </div>
+
+    <style>
+        .confirmation-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+        .confirmation-card {
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 500px;
+        }
+        .icon-success {
+            color: green;
+            font-size: 4rem;
+        }
+        .icon-error {
+            color: red;
+            font-size: 4rem;
+        }
+    </style>
+{% endblock %}

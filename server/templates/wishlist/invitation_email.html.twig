@@ -1,0 +1,12 @@
+<h1>Invitation à consulter une wishlist</h1>
+
+<p>Bonjour {{ user.firstName }} {{ user.lastName }},</p>
+<p>Vous avez été invité à consulter la wishlist : <strong>{{ wishlist.name }}</strong>.</p>
+
+<p>Cliquez sur l'un des liens ci-dessous pour répondre à l'invitation :</p>
+<p>
+    <a href="{{ accept_url }}" class="btn">Accepter l'invitation ✅</a>
+    <a href="{{ decline_url }}" class="btn">Refuser l'invitation ❌</a>
+</p>
+
+<p>Merci de votre réponse !</p>
