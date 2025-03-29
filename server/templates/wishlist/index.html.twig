@@ -8,7 +8,6 @@ Yiré Soro, Tchadel Icard
 {% block title %}Mes Wishlists{% endblock %}
 
 {% block body %}
-
     <!-- Masthead-->
     <header class="masthead text-white text-center" style="position: relative; background:#99cc99">
       <div class="container">
@@ -80,15 +79,36 @@ Yiré Soro, Tchadel Icard
                         <i class="fas fa-share fa-2x"></i>
                       </div>
                     </a>
-                    <a href="{{ path('app_wishlist_delete', {'id': wishlist.id}) }}">
+                    <button class="btn bg-transparent p-0 border-0" data-bs-toggle="modal" data-bs-target="#deleteModal{{ wishlist.id }}">
                       <div class="portfolio-item-caption-content text-center text-white m-2">
                         <i class="fas fa-trash fa-2x"></i>
                       </div>
-                    </a>
+                    </button>
                   </div>
                   <img class="img-fluid" src="{{ asset('images/gift_bg.png') }}" alt="Wishlist item">
                   <div class="wishlist-name text-center mt-2">
                     {{ wishlist.name }}
+                  </div>
+                </div>
+              </div>
+              <!-- Modal de confirmation de suppression -->
+              <div class="modal fade" id="deleteModal{{ wishlist.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ wishlist.id }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="deleteModalLabel{{ wishlist.id }}">Confirmer la suppression</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                    </div>
+                    <div class="modal-body">
+                      Êtes-vous sûr de vouloir supprimer la wishlist "{{ wishlist.name }}" ?
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                      <form action="{{ path('app_wishlist_delete', {id: wishlist.id}) }}" method="post">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ wishlist.id) }}">
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                      </form>
+                    </div>
                   </div>
                 </div>
               </div>
