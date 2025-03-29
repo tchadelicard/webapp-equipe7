@@ -1,3 +1,5 @@
+# Binôme 21
+# Yiré Soro, Tchadel Icard
 security:
   # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
   password_hashers:

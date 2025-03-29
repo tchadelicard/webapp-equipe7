@@ -1,4 +1,9 @@
 <?php
+/*
+ * Binôme 19
+ * Julie Descloitres, Jean-Philippe Levesques
+ */
+
 namespace App\Controller;
 
 use App\Entity\Purchase;
