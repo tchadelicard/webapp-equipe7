@@ -29,8 +29,7 @@ class PurchaseController extends AbstractController
         EntityManagerInterface $em,
         SluggerInterface $slugger,
         #[Autowire('%kernel.project_dir%/public/uploads/purchases')] string $purchasesDirectory
-    ): Response
-    {
+    ): Response {
         $item = $em->getRepository(Item::class)->find($itemId);
         if (!$item) {
             throw $this->createNotFoundException('Item not found');
@@ -45,7 +44,7 @@ class PurchaseController extends AbstractController
             }
             $purchase = $item->getPurchase();
             return $this->redirectToRoute('purchase_update', ['itemId' => $itemId]);
-        } else{
+        } else {
             $purchase = new Purchase();
         }
 
@@ -56,29 +55,29 @@ class PurchaseController extends AbstractController
             $purchaseProofFile = $form->get('purchaseProof')->getData();
 
             if ($purchaseProofFile) {
-                $originalFilename = pathinfo($purchaseProofFile->getClientOriginalName(), PATHINFO_FILENAME);            }
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$purchaseProofFile->guessExtension();                // $filename = uniqid() . '.' . $proofFile->guessExtension();
+                $originalFilename = pathinfo($purchaseProofFile->getClientOriginalName(), PATHINFO_FILENAME);
+            }
+            $safeFilename = $slugger->slug($originalFilename);
+            $newFilename = $safeFilename . '-' . uniqid() . '.' . $purchaseProofFile->guessExtension();
 
-                // Move the file to the directory where brochures are stored
-                try {
-                    $purchaseProofFile->move($purchasesDirectory, $newFilename);
-                } catch (FileException $e) {
-                    // ... handle exception if something happens during file upload
-                }
+            // Move the file to the directory where purchase proofs are stored
+            try {
+                $purchaseProofFile->move($purchasesDirectory, $newFilename);
+            } catch (FileException $e) {
+                // ... handle exception if something happens during file upload
+            }
 
-                // updates the 'brochureFilename' property to store the PDF file name
-                // instead of its contents
-                $purchase->setProofFilename($newFilename);                
+            // Update the purchase entity to store the filename
+            $purchase->setProofFilename($newFilename);
 
 
-                $purchase->setItem($item);
-                $purchase->setBuyer($user);
+            $purchase->setItem($item);
+            $purchase->setBuyer($user);
 
-                $em->persist($purchase);
-                $em->flush();
+            $em->persist($purchase);
+            $em->flush();
 
-                return $this->redirectToRoute('app_wishlist_public_view', ['uuid' => $item->getWishlist()->getUuid()]);
+            return $this->redirectToRoute('app_wishlist_public_view', ['uuid' => $item->getWishlist()->getUuid()]);
         }
 
         return $this->render('purchase/new.html.twig', [
@@ -93,8 +92,7 @@ class PurchaseController extends AbstractController
         Request $request,
         int $itemId,
         EntityManagerInterface $em,
-    ): Response
-    {
+    ): Response {
         $item = $em->getRepository(Item::class)->find($itemId);
         if (!$item) {
             throw $this->createNotFoundException('Item not found');
